@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/generated"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+  // Default to ./database.db for development if DATABASE_URL is not set
+  // In Electron app, this is set dynamically in main.ts
+}
+
+model Profile {
+  id           String   @id @default(cuid())
+  workHistory  Json     // Array of work experience objects
+  skills       Json     // Array of skills (stored as JSON array)
+  education    Json     // Array of education objects
+  personalInfo Json     // Name, contact info, etc.
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  resumes      Resume[]
+}
+
+model Resume {
+  id            String   @id @default(cuid())
+  profileId     String
+  jobType       String   // e.g., "Software Engineer", "Marketing Manager"
+  title         String?
+  content       Json     // Resume content structure
+  isActive      Boolean  @default(false)
+  isTrueResume  Boolean  @default(false) // True if this is the base resume from profile, false if customized for a job
+  jobDescription String? // Job description used for customization (only for customized resumes)
+  companyName   String?  // Company name for customized resume
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile        Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  coverLetters   CoverLetter[]
+  interviewPrep  InterviewPrep?
+  skillsHighlights SkillsHighlight[]
+}
+
+model CoverLetter {
+  id            String   @id @default(cuid())
+  resumeId      String
+  jobTitle      String
+  companyName   String
+  jobDescription String?
+  content       String
+  createdAt     DateTime @default(now())
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
+
+model InterviewPrep {
+  id        String   @id @default(cuid())
+  resumeId  String   @unique
+  notes     Json     // Interview notes and answers
+  questions Json     // Generated questions
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
+
+model SkillsHighlight {
+  id            String   @id @default(cuid())
+  resumeId      String
+  jobDescription String
+  matchedSkills Json     // Skills that match
+  suggestions   Json     // Optimization suggestions
+  createdAt     DateTime @default(now())
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
+

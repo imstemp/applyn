@@ -1,0 +1,86 @@
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import ProfileForm from "@/components/dashboard/ProfileForm";
+import ResumeManager from "@/components/dashboard/ResumeManager";
+import { Link } from "react-router-dom";
+
+export default function Dashboard() {
+  return (
+    <DashboardLayout>
+      <div className="space-y-8 animate-fade-in">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 rounded-2xl p-8 text-white shadow-xl">
+          <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
+          <p className="text-blue-50 text-lg">
+            Manage your profile, generate resumes, and access all your job hunting tools.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Profile Section */}
+            <div className="bg-white rounded-2xl shadow-soft border border-slate-200/50 overflow-hidden">
+              <div className="bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-4 border-b border-slate-200">
+                <h2 className="text-xl font-bold text-slate-800">Your Profile</h2>
+                <p className="text-sm text-slate-700 mt-1">Complete your profile to generate better resumes</p>
+              </div>
+              <div className="p-6">
+                <ProfileForm />
+              </div>
+            </div>
+
+            {/* Resume Management */}
+            <div className="bg-white rounded-2xl shadow-soft border border-slate-200/50 overflow-hidden">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-slate-200">
+                <h2 className="text-xl font-bold text-slate-800">Resume Management</h2>
+                <p className="text-sm text-slate-700 mt-1">Generate and manage multiple resumes for different job types</p>
+              </div>
+              <div className="p-6">
+                <ResumeManager />
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <div className="bg-white rounded-2xl shadow-soft border border-slate-200/50 overflow-hidden">
+              <div className="bg-gradient-to-r from-cyan-50 to-teal-50 px-6 py-4 border-b border-slate-200">
+                <h3 className="text-lg font-bold text-slate-800">Quick Actions</h3>
+              </div>
+              <div className="p-6 space-y-3">
+                <Link
+                  to="/cover-letter"
+                  className="group flex items-center w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:from-blue-700 hover:to-cyan-700 shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
+                >
+                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Generate Cover Letter
+                </Link>
+                <Link
+                  to="/interview"
+                  className="group flex items-center w-full px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
+                >
+                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                  Interview Prep
+                </Link>
+                <Link
+                  to="/skills"
+                  className="group flex items-center w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
+                >
+                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  Skills Highlighter
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}
+

@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fafbfc;
+  --foreground: #0f172a;
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --primary-light: #60a5fa;
+  --secondary: #8b5cf6;
+  --accent: #06b6d4;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --card: #ffffff;
+  --card-hover: #f8fafc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a;
+    --foreground: #f1f5f9;
+    --primary: #60a5fa;
+    --primary-dark: #3b82f6;
+    --primary-light: #93c5fd;
+    --secondary: #a78bfa;
+    --accent: #22d3ee;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --error: #f87171;
+    --muted: #94a3b8;
+    --border: #1e293b;
+    --card: #1e293b;
+    --card-hover: #334155;
+  }
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure placeholders have good contrast - no light grey on white */
+input::placeholder,
+textarea::placeholder {
+  color: #64748b !important; /* slate-500 - darker for better contrast */
+  opacity: 1;
+}
+
+/* Ensure all text on white backgrounds is dark enough */
+input,
+textarea,
+select {
+  color: #0f172a !important; /* slate-900 - very dark for maximum contrast */
+}
+
+/* Comprehensive fix for white text on white backgrounds */
+/* Override white text when it's not in a button or colored background */
+.bg-white .text-white:not(button):not(button *):not(.bg-gradient-to-r):not(.bg-gradient-to-r *):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-green"]):not([class*="bg-red"]):not([class*="bg-cyan"]):not([class*="bg-pink"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-teal"]) {
+  color: #0f172a !important;
+}
+
+/* Set default text color for elements in white containers that don't have explicit text color */
+.bg-white {
+  color: #0f172a;
+}
+
+/* But preserve white text in buttons and colored backgrounds */
+.bg-white button,
+.bg-white .bg-gradient-to-r,
+.bg-white [class*="bg-blue"],
+.bg-white [class*="bg-purple"],
+.bg-white [class*="bg-green"],
+.bg-white [class*="bg-red"],
+.bg-white [class*="bg-cyan"],
+.bg-white [class*="bg-pink"],
+.bg-white [class*="bg-emerald"],
+.bg-white [class*="bg-rose"],
+.bg-white [class*="bg-teal"] {
+  color: inherit;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .gradient-primary {
+    @apply bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500;
+  }
+  
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500;
+  }
+  
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  
+  .shadow-glow-hover:hover {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  }
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+

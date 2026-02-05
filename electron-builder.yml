@@ -1,0 +1,69 @@
+appId: com.jobhunterstoolbox.app
+productName: JobHunters Toolbox
+directories:
+  buildResources: build
+  output: dist-electron
+icon: build/icon
+files:
+  - '!**/.vscode/*'
+  - '!src/**/*'
+  - '!electron/**/*.ts'
+  - '!**/*.map'
+  - '!*.db'
+  - '!*.db-journal'
+  - '!**/test/**'
+  - '!**/tests/**'
+  - '!**/__tests__/**'
+  - '!**/spec/**'
+  - '!**/docs/**'
+  - '!**/examples/**'
+  - '!**/*.test.js'
+  - '!**/*.test.ts'
+  - '!**/*.spec.js'
+  - '!**/*.spec.ts'
+  - '!**/README.md'
+  - '!**/CHANGELOG.md'
+  - '!**/LICENSE'
+  - '!**/.git/**'
+  - '!**/.github/**'
+  - '!**/*.d.ts'
+  - '!**/*.ts'
+  - '!**/tsconfig.json'
+  - '!**/tsconfig.*.json'
+  - '!node_modules/date-fns/locale/**'
+  - '!dist-electron/mac/**'
+  - '!dist-electron/mac-arm64/**'
+  - '!dist-electron/*.dmg'
+  - '!dist-electron/*.dmg.blockmap'
+  - 'package.json'
+  - 'dist/**/*'
+  - 'dist-electron/electron/**/*.js'
+  
+# Only include production dependencies
+# electron-builder will automatically include dependencies from package.json
+# but we exclude devDependencies
+  
+# better-sqlite3 requires native binaries to be unpacked
+asarUnpack:
+  - 'node_modules/better-sqlite3/**'
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  category: public.app-category.productivity
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+

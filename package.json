@@ -1,0 +1,51 @@
+{
+  "name": "jobhunterstoolbox",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist-electron/electron/main.js",
+  "author": "JobHunters Toolbox",
+  "description": "AI-powered job hunting tools for resume generation, cover letters, and interview prep",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:electron": "tsc -p tsconfig.node.json",
+    "electron:dev": "npm run build:electron && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "npm run build && npm run build:electron && electron-builder",
+    "preview": "vite preview",
+    "db:push": "DATABASE_URL=\"file:./database.db\" prisma db push",
+    "db:studio": "DATABASE_URL=\"file:./database.db\" prisma studio",
+    "db:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
+    "better-sqlite3": "^12.5.0",
+    "date-fns": "^4.1.0",
+    "docx": "^9.5.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
+    "openai": "^4.70.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.54.2",
+    "react-router-dom": "^6.28.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.6",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "eslint": "^9.18.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vite-plugin-electron": "^0.28.0",
+    "wait-on": "^8.0.1"
+  }
+}
