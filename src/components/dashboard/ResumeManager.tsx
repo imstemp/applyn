@@ -9,6 +9,7 @@ export default function ResumeManager() {
   const [generatingTrue, setGeneratingTrue] = useState(false);
   const [customizing, setCustomizing] = useState(false);
   const [viewingResumeId, setViewingResumeId] = useState<string | null>(null);
+  const [viewingWasOriginal, setViewingWasOriginal] = useState(false);
   
   // Customize form state
   const [showCustomizeForm, setShowCustomizeForm] = useState(false);
@@ -22,12 +23,35 @@ export default function ResumeManager() {
     loadResumes();
   }, []);
 
+  // Refresh resume list when profile is saved (Original Resume may have been regenerated)
+  useEffect(() => {
+    const onProfileSaved = () => loadResumes();
+    window.addEventListener("profile-saved", onProfileSaved);
+    return () => window.removeEventListener("profile-saved", onProfileSaved);
+  }, []);
+
   const loadResumes = async () => {
     setLoading(true);
     try {
       const response = await api.resume.list();
       if (response.success && response.data) {
-        setResumes(response.data);
+        const newList = response.data;
+        setResumes(newList);
+        // If we're viewing a resume that no longer exists (e.g. Original was regenerated), switch to new one or close
+        if (viewingResumeId) {
+          const stillExists = newList.some((r: Resume) => r.id === viewingResumeId);
+          if (!stillExists && viewingWasOriginal) {
+            const newOriginal = newList.find((r: Resume) => r.isTrueResume);
+            if (newOriginal) {
+              setViewingResumeId(newOriginal.id);
+              // still viewing the original (new one)
+            } else {
+              setViewingResumeId(null);
+            }
+          } else if (!stillExists) {
+            setViewingResumeId(null);
+          }
+        }
       }
     } catch (error) {
       console.error("Error loading resumes:", error);
@@ -304,7 +328,10 @@ export default function ResumeManager() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => setViewingResumeId(originalResume.id)}
+                      onClick={() => {
+                        setViewingResumeId(originalResume.id);
+                        setViewingWasOriginal(true);
+                      }}
                       className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:from-blue-700 hover:to-cyan-700 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-sm font-semibold"
                     >
                       View/Edit
@@ -364,7 +391,10 @@ export default function ResumeManager() {
                       </div>
                       <div className="flex gap-2">
                         <button
-                          onClick={() => setViewingResumeId(resume.id)}
+                          onClick={() => {
+                          setViewingResumeId(resume.id);
+                          setViewingWasOriginal(!!resume.isTrueResume);
+                        }}
                           className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:from-blue-700 hover:to-cyan-700 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-sm font-semibold"
                         >
                           View/Edit
@@ -396,10 +426,15 @@ export default function ResumeManager() {
       {viewingResumeId && (
         <ResumeViewer
           resumeId={viewingResumeId}
-          onClose={() => setViewingResumeId(null)}
+          onClose={() => {
+            setViewingResumeId(null);
+            setViewingWasOriginal(false);
+            loadResumes();
+          }}
           onUpdate={() => {
             loadResumes();
             setViewingResumeId(null);
+            setViewingWasOriginal(false);
           }}
         />
       )}

@@ -39,6 +39,7 @@ export default function ProfileForm() {
   const [saved, setSaved] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
   const [hasOriginalResume, setHasOriginalResume] = useState(false);
+  const [originalResumeUpdated, setOriginalResumeUpdated] = useState(false);
   const [newSkill, setNewSkill] = useState("");
   const {
     register,
@@ -102,11 +103,28 @@ export default function ProfileForm() {
       if (response.success) {
         setSaved(true);
         setTimeout(() => setSaved(false), 5000);
-        // Check if original resume exists after saving
+        // Automatically update the Original Resume with the new profile data
+        if (hasOriginalResume) {
+          setRegenerating(true);
+          setOriginalResumeUpdated(false);
+          try {
+            const resumeResponse = await api.resume.generateTrue({ ageOptimized: false });
+            if (resumeResponse.success) {
+              setHasOriginalResume(true);
+              setOriginalResumeUpdated(true);
+              window.dispatchEvent(new CustomEvent("profile-saved"));
+            }
+          } catch (err) {
+            console.error("Error updating Original Resume:", err);
+          } finally {
+            setRegenerating(false);
+          }
+        }
+        // Refresh resume list state
         api.resume.list()
-          .then((response) => {
-            if (response.success && response.data) {
-              const originalResume = response.data.find((r: any) => r.isTrueResume);
+          .then((listResponse) => {
+            if (listResponse.success && listResponse.data) {
+              const originalResume = listResponse.data.find((r: any) => r.isTrueResume);
               setHasOriginalResume(!!originalResume);
             }
           })
@@ -497,7 +515,10 @@ export default function ProfileForm() {
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             <div className="flex items-center justify-between">
-              <span>Profile saved successfully!</span>
+              <span>
+                Profile saved successfully!
+                {originalResumeUpdated && " Original Resume has been updated."}
+              </span>
               {hasOriginalResume && (
                 <button
                   type="button"

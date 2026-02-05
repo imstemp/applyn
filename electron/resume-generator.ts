@@ -81,6 +81,7 @@ function buildBaseResumeStructure(profileData: ProfileData, ageOptimized: boolea
     education,
     skills,
     summary: "",
+    coreCompetencies: "",
   };
 }
 
@@ -115,7 +116,9 @@ MANDATORY: You MUST return enhanced descriptions for EVERY work experience and E
 Your task:
 1. CREATE A PROFESSIONAL SUMMARY: Write a compelling 3-4 sentence summary that highlights the candidate's key strengths${ageOptimized ? ", proven expertise, and unique value proposition" : ", years of experience, and unique value proposition"}. Use powerful, confident language${ageOptimized ? " with a modern, contemporary tone" : ""}.
 
-2. ENHANCE WORK EXPERIENCE DESCRIPTIONS: For EACH AND EVERY work experience in the Base Resume Structure, enhance the description field only (you must return one enhanced description for each work experience):
+2. CREATE CORE COMPETENCIES: Generate a bullet list of 5-8 key core competencies (e.g., "Strategic Planning", "Team Leadership", "Cross-functional Collaboration") derived from the candidate's work history, skills, and experience. Return as a single string with each competency on its own line starting with "• " (e.g. "• Leadership\\n• Project Management\\n• ...").
+
+3. ENHANCE WORK EXPERIENCE DESCRIPTIONS: For EACH AND EVERY work experience in the Base Resume Structure, enhance the description field only (you must return one enhanced description for each work experience):
    - Format as bullet points: Each achievement should be on its own line starting with "• " (bullet character)
    - Convert plain descriptions into achievement-focused bullet points
    - Use strong, modern action verbs (Led, Developed, Implemented, Optimized, Increased, etc.)${ageOptimized ? " - prefer contemporary, current industry terminology" : ""}
@@ -124,7 +127,7 @@ Your task:
    - Focus on achievements and outcomes, not just duties${ageOptimized ? "\n   - For older positions, emphasize transferable skills and modern relevance rather than dated specifics" : ""}
    - CRITICAL: Return the description as a multi-line string with each bullet point on a new line, starting with "• "
 
-3. ENHANCE EDUCATION DESCRIPTIONS: Make education descriptions sound more professional and highlight relevant coursework or achievements if applicable.
+4. ENHANCE EDUCATION DESCRIPTIONS: Make education descriptions sound more professional and highlight relevant coursework or achievements if applicable.
 
 Base Resume Structure (factual data already preserved):
 ${JSON.stringify(baseResume, null, 2)}
@@ -132,6 +135,7 @@ ${JSON.stringify(baseResume, null, 2)}
 Return a JSON object with ONLY these fields:
 {
   "summary": "A compelling, professional 3-4 sentence summary that makes the candidate sound impressive",
+  "coreCompetencies": "• Core competency one\\n• Core competency two\\n• Core competency three\\n• (5-8 total, one per line, each starting with • )",
   "workExperience": [
     {
       "description": "• Enhanced bullet point with action verbs and achievements for the FIRST work experience\n• Second bullet point highlighting key achievements\n• Third bullet point with quantifiable results"
@@ -150,10 +154,11 @@ Return a JSON object with ONLY these fields:
 }
 
 CRITICAL REQUIREMENTS:
+- You MUST return coreCompetencies as a string with 5-8 bullet points (each line starting with "• ").
 - The workExperience array MUST contain exactly the same number of entries as provided in the Base Resume Structure
 - Each entry in workExperience must correspond to the same position in the original array (first entry = first work experience, second entry = second work experience, etc.)
 - The education array MUST contain exactly the same number of entries as provided in the Base Resume Structure
-- Return ONLY the summary and enhanced descriptions
+- Return ONLY the summary, coreCompetencies, and enhanced descriptions
 - DO NOT include personalInfo, company names, job titles, dates, or skills in your response
 - These will be merged with the preserved factual data
 - Return only valid JSON.`
@@ -166,7 +171,9 @@ MANDATORY: You MUST return enhanced descriptions for EVERY work experience and E
 Your task:
 1. CREATE A TARGETED PROFESSIONAL SUMMARY: Write a compelling 3-4 sentence summary specifically tailored for ${jobType} roles, highlighting relevant experience and skills${ageOptimized ? " with a modern, contemporary tone" : ""}.
 
-2. ENHANCE WORK EXPERIENCE DESCRIPTIONS: For EACH AND EVERY work experience in the Base Resume Structure, enhance the description field only, emphasizing relevance to ${jobType} (you must return one enhanced description for each work experience):
+2. CREATE CORE COMPETENCIES: Generate a bullet list of 5-8 key core competencies relevant to ${jobType} roles, derived from the candidate's work history, skills, and experience. Return as a single string with each competency on its own line starting with "• " (e.g. "• Leadership\\n• Project Management\\n• ...").
+
+3. ENHANCE WORK EXPERIENCE DESCRIPTIONS: For EACH AND EVERY work experience in the Base Resume Structure, enhance the description field only, emphasizing relevance to ${jobType} (you must return one enhanced description for each work experience):
    - Format as bullet points: Each achievement should be on its own line starting with "• " (bullet character)
    - Convert plain descriptions into achievement-focused bullet points
    - Use strong, modern action verbs (Led, Developed, Implemented, Optimized, Increased, etc.)${ageOptimized ? " - prefer contemporary, current industry terminology" : ""}
@@ -176,7 +183,7 @@ Your task:
    - Focus on achievements and outcomes relevant to ${jobType}${ageOptimized ? "\n   - For older positions, emphasize transferable skills and modern relevance rather than dated specifics" : ""}
    - CRITICAL: Return the description as a multi-line string with each bullet point on a new line, starting with "• "
 
-3. ENHANCE EDUCATION DESCRIPTIONS: Make education descriptions sound professional and highlight any coursework or achievements relevant to ${jobType}.
+4. ENHANCE EDUCATION DESCRIPTIONS: Make education descriptions sound professional and highlight any coursework or achievements relevant to ${jobType}.
 
 Base Resume Structure (factual data already preserved):
 ${JSON.stringify(baseResume, null, 2)}
@@ -184,6 +191,7 @@ ${JSON.stringify(baseResume, null, 2)}
 Return a JSON object with ONLY these fields:
 {
   "summary": "A compelling, professional summary tailored for ${jobType} roles",
+  "coreCompetencies": "• Core competency one relevant to ${jobType}\\n• Core competency two\\n• (5-8 total, one per line, each starting with • )",
   "workExperience": [
     {
       "description": "• Enhanced bullet point with action verbs and achievements relevant to ${jobType} for the FIRST work experience\n• Second bullet point highlighting key achievements relevant to ${jobType}\n• Third bullet point with quantifiable results"
@@ -202,10 +210,11 @@ Return a JSON object with ONLY these fields:
 }
 
 CRITICAL REQUIREMENTS:
+- You MUST return coreCompetencies as a string with 5-8 bullet points (each line starting with "• ").
 - The workExperience array MUST contain exactly the same number of entries as provided in the Base Resume Structure
 - Each entry in workExperience must correspond to the same position in the original array (first entry = first work experience, second entry = second work experience, etc.)
 - The education array MUST contain exactly the same number of entries as provided in the Base Resume Structure
-- Return ONLY the summary and enhanced descriptions
+- Return ONLY the summary, coreCompetencies, and enhanced descriptions
 - DO NOT include personalInfo, company names, job titles, dates, or skills in your response
 - These will be merged with the preserved factual data
 - Return only valid JSON.`;
@@ -239,6 +248,7 @@ CRITICAL REQUIREMENTS:
     const finalResume = {
       personalInfo: baseResume.personalInfo,
       summary: aiEnhancements.summary || "",
+      coreCompetencies: aiEnhancements.coreCompetencies || "",
       workExperience: baseResume.workExperience.map((exp: any, index: number) => {
         const enhancement = aiWorkExperience[index];
         return {

@@ -667,7 +667,49 @@ ipcMain.handle('resume:downloadWord', async (_event, resumeId: string) => {
       );
     }
     
-    // Work Experience
+    // Core Competencies
+    if (content.coreCompetencies && typeof content.coreCompetencies === 'string' && content.coreCompetencies.trim()) {
+      const competencyLines = content.coreCompetencies
+        .split('\n')
+        .map((line: string) => line.trim())
+        .filter((line: string) => line.length > 0);
+      if (competencyLines.length > 0) {
+        children.push(new Paragraph({ spacing: { after: 240 } }));
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "CORE COMPETENCIES",
+                bold: true,
+                size: 28,
+                font: "Calibri",
+                allCaps: true,
+                underline: { type: "single", color: "000000" },
+              }),
+            ],
+            spacing: { after: 120 },
+          })
+        );
+        competencyLines.forEach((line: string) => {
+          children.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: line.startsWith('•') || line.startsWith('-') ? line : `• ${line}`,
+                  size: 22,
+                  font: "Calibri",
+                }),
+              ],
+              bullet: { level: 0 },
+              spacing: { after: 80 },
+            })
+          );
+        });
+        children.push(new Paragraph({ spacing: { after: 240 } }));
+      }
+    }
+    
+    // Professional Experience
     if (content.workExperience && Array.isArray(content.workExperience) && content.workExperience.length > 0) {
       children.push(new Paragraph({ spacing: { after: 240 } }));
       children.push(
@@ -754,14 +796,14 @@ ipcMain.handle('resume:downloadWord', async (_event, resumeId: string) => {
       });
     }
     
-    // Education
+    // Education and Certifications
     if (content.education && Array.isArray(content.education) && content.education.length > 0) {
       children.push(new Paragraph({ spacing: { after: 240 } }));
       children.push(
         new Paragraph({
           children: [
             new TextRun({
-              text: "EDUCATION",
+              text: "EDUCATION AND CERTIFICATIONS",
               bold: true,
               size: 28,
               font: "Calibri",
@@ -819,14 +861,14 @@ ipcMain.handle('resume:downloadWord', async (_event, resumeId: string) => {
       });
     }
     
-    // Skills
+    // Technical Proficiencies
     if (content.skills && Array.isArray(content.skills) && content.skills.length > 0) {
       children.push(new Paragraph({ spacing: { after: 240 } }));
       children.push(
         new Paragraph({
           children: [
             new TextRun({
-              text: "SKILLS",
+              text: "TECHNICAL PROFICIENCIES",
               bold: true,
               size: 28,
               font: "Calibri",

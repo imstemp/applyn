@@ -38,10 +38,13 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
       } else {
         console.error("Error loading resume:", response.error);
         setResume(null);
+        // Resume was likely replaced (e.g. Original Resume regenerated) — close viewer so parent can refresh
+        onClose();
       }
     } catch (error) {
       console.error("Error loading resume:", error);
       setResume(null);
+      onClose();
     } finally {
       setLoading(false);
     }
@@ -224,7 +227,7 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
                 </div>
               )}
 
-              {/* Summary */}
+              {/* 1. Professional Summary */}
               {content.summary && (
                 <div>
                   <h3 className="text-lg font-bold mb-2 text-slate-900">Professional Summary</h3>
@@ -232,10 +235,25 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
                 </div>
               )}
 
-              {/* Work Experience */}
+              {/* 2. Core Competencies */}
+              {content.coreCompetencies && (
+                <div>
+                  <h3 className="text-lg font-bold mb-2 text-slate-900">Core Competencies</h3>
+                  <div className="text-slate-700">
+                    {content.coreCompetencies.split('\n').map((line: string, lineIdx: number) => {
+                      const trimmedLine = line.trim();
+                      if (!trimmedLine) return null;
+                      const bulletLine = trimmedLine.startsWith('•') || trimmedLine.startsWith('-') ? trimmedLine : `• ${trimmedLine}`;
+                      return <p key={lineIdx} className="mb-1">{bulletLine}</p>;
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Professional Experience */}
               {content.workExperience && Array.isArray(content.workExperience) && content.workExperience.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-bold mb-2 text-slate-900">Work Experience</h3>
+                  <h3 className="text-lg font-bold mb-2 text-slate-900">Professional Experience</h3>
                   {content.workExperience.map((exp: any, idx: number) => (
                     <div key={idx} className="mb-4">
                       <h4 className="font-semibold text-slate-900">{exp.title} at {exp.company}</h4>
@@ -245,13 +263,8 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
                           {exp.description.split('\n').map((line: string, lineIdx: number) => {
                             const trimmedLine = line.trim();
                             if (!trimmedLine) return null;
-                            // If line already starts with bullet, use it; otherwise add one
-                            const bulletLine = trimmedLine.startsWith('•') || trimmedLine.startsWith('-') 
-                              ? trimmedLine 
-                              : `• ${trimmedLine}`;
-                            return (
-                              <p key={lineIdx} className="mb-1">{bulletLine}</p>
-                            );
+                            const bulletLine = trimmedLine.startsWith('•') || trimmedLine.startsWith('-') ? trimmedLine : `• ${trimmedLine}`;
+                            return <p key={lineIdx} className="mb-1">{bulletLine}</p>;
                           })}
                         </div>
                       )}
@@ -260,10 +273,10 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
                 </div>
               )}
 
-              {/* Education */}
+              {/* 4. Education and Certifications */}
               {content.education && Array.isArray(content.education) && content.education.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-bold mb-2 text-slate-900">Education</h3>
+                  <h3 className="text-lg font-bold mb-2 text-slate-900">Education and Certifications</h3>
                   {content.education.map((edu: any, idx: number) => (
                     <div key={idx} className="mb-2">
                       <h4 className="font-semibold text-slate-900">{edu.degree} - {edu.school}</h4>
@@ -273,10 +286,10 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
                 </div>
               )}
 
-              {/* Skills */}
+              {/* 5. Technical Proficiencies */}
               {content.skills && Array.isArray(content.skills) && content.skills.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-bold mb-2 text-slate-900">Skills</h3>
+                  <h3 className="text-lg font-bold mb-2 text-slate-900">Technical Proficiencies</h3>
                   <p className="text-slate-700">{content.skills.join(", ")}</p>
                 </div>
               )}
