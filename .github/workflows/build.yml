@@ -40,6 +40,7 @@ jobs:
         uses: samuelmeuli/action-electron-builder@v1
         if: startsWith(github.ref, 'refs/tags/')
         env:
+          # false = use cert from MAC_CERTS secret; set true only if runner has cert in keychain
           CSC_IDENTITY_AUTO_DISCOVERY: false
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
