@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+# Allow creating releases and uploading release assets
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ${{ matrix.os }}
