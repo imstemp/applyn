@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard';
 import CoverLetter from './pages/CoverLetter';
 import Interview from './pages/Interview';
 import Skills from './pages/Skills';
+import Coach from './pages/Coach';
 import Settings from './pages/Settings';
 
 function AppRouter() {
@@ -13,6 +14,7 @@ function AppRouter() {
       <Route path="/cover-letter" element={<CoverLetter />} />
       <Route path="/interview" element={<Interview />} />
       <Route path="/skills" element={<Skills />} />
+      <Route path="/coach" element={<Coach />} />
       <Route path="/settings" element={<Settings />} />
     </Routes>
   );

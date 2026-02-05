@@ -1,29 +1,14 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import { getOpenAIKey, setOpenAIKey } from './config';
+import { getAnthropicKey, setAnthropicKey } from './config';
 import { initializeDatabase, closeDatabase } from './db';
 import { setDatabase, setMainWindow } from './ipc-handlers';
-import OpenAI from 'openai';
 
 // Disable proxy server detection
 app.commandLine.appendSwitch('auto-detect', 'false');
 app.commandLine.appendSwitch('no-proxy-server');
 
 let mainWindow: BrowserWindow | null = null;
-
-// Initialize OpenAI client globally
-let openai: OpenAI | null = null;
-
-export function initializeOpenAI(apiKey: string) {
-  openai = new OpenAI({ apiKey });
-}
-
-export function getOpenAI(): OpenAI {
-  if (!openai) {
-    throw new Error('OpenAI API key not set. Please configure it in settings.');
-  }
-  return openai;
-}
 
 
 function createWindow() {
@@ -105,18 +90,6 @@ app.whenReady().then(() => {
   // The database will be initialized on first use via getDatabase() in ipc-handlers
   // This prevents blocking the window from showing
   
-  // Initialize OpenAI if key is already set (non-blocking)
-  setImmediate(() => {
-    try {
-      const storedKey = getOpenAIKey();
-      if (storedKey) {
-        initializeOpenAI(storedKey);
-      }
-    } catch (error) {
-      console.error('OpenAI initialization error:', error);
-    }
-  });
-  
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -132,20 +105,12 @@ app.on('window-all-closed', () => {
 });
 
 // Config IPC handlers
-ipcMain.handle('config:getOpenAIKey', () => {
-  return getOpenAIKey();
+ipcMain.handle('config:getAnthropicKey', () => {
+  return getAnthropicKey();
 });
 
-ipcMain.handle('config:setOpenAIKey', async (_event, apiKey: string) => {
-  const success = setOpenAIKey(apiKey);
-  if (success && apiKey) {
-    try {
-      initializeOpenAI(apiKey);
-    } catch (error) {
-      console.error('Failed to initialize OpenAI after setting key:', error);
-    }
-  }
-  return success;
+ipcMain.handle('config:setAnthropicKey', async (_event, apiKey: string) => {
+  return setAnthropicKey(apiKey);
 });
 
 // Import all other IPC handlers

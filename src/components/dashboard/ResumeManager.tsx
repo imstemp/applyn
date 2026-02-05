@@ -334,7 +334,7 @@ export default function ResumeManager() {
                       }}
                       className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:from-blue-700 hover:to-cyan-700 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-sm font-semibold"
                     >
-                      View/Edit
+                      View
                     </button>
                     {!originalResume.isActive && (
                       <button
@@ -426,6 +426,7 @@ export default function ResumeManager() {
       {viewingResumeId && (
         <ResumeViewer
           resumeId={viewingResumeId}
+          readOnly={resumes.some((r) => r.id === viewingResumeId && r.isTrueResume)}
           onClose={() => {
             setViewingResumeId(null);
             setViewingWasOriginal(false);

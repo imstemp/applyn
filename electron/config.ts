@@ -5,8 +5,8 @@ import * as path from 'path';
 const CONFIG_FILE = path.join(app.getPath('userData'), 'config.json');
 
 interface Config {
-  openaiApiKey?: string;
-  openaiApiKeyEncrypted?: string;
+  anthropicApiKey?: string;
+  anthropicApiKeyEncrypted?: string;
 }
 
 function getConfig(): Config {
@@ -16,10 +16,10 @@ function getConfig(): Config {
       const config = JSON.parse(data);
       
       // Decrypt API key if it exists and safeStorage is available
-      if (config.openaiApiKeyEncrypted && safeStorage.isEncryptionAvailable()) {
+      if (config.anthropicApiKeyEncrypted && safeStorage.isEncryptionAvailable()) {
         try {
-          const buffer = Buffer.from(config.openaiApiKeyEncrypted, 'base64');
-          config.openaiApiKey = safeStorage.decryptString(buffer);
+          const buffer = Buffer.from(config.anthropicApiKeyEncrypted, 'base64');
+          config.anthropicApiKey = safeStorage.decryptString(buffer);
         } catch (error) {
           console.error('Failed to decrypt API key:', error);
         }
@@ -33,23 +33,23 @@ function getConfig(): Config {
   return {};
 }
 
-export function getOpenAIKey(): string | null {
+export function getAnthropicKey(): string | null {
   const config = getConfig();
-  return config.openaiApiKey || null;
+  return config.anthropicApiKey || null;
 }
 
-export function setOpenAIKey(apiKey: string): boolean {
+export function setAnthropicKey(apiKey: string): boolean {
   try {
     const config = getConfig();
     
     // Encrypt the API key if safeStorage is available
     if (safeStorage.isEncryptionAvailable()) {
       const encrypted = safeStorage.encryptString(apiKey);
-      config.openaiApiKeyEncrypted = encrypted.toString('base64');
-      delete config.openaiApiKey; // Don't store plain text
+      config.anthropicApiKeyEncrypted = encrypted.toString('base64');
+      delete config.anthropicApiKey; // Don't store plain text
     } else {
       // Fallback to plain text if encryption is not available
-      config.openaiApiKey = apiKey;
+      config.anthropicApiKey = apiKey;
     }
     
     // Ensure directory exists

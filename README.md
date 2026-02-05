@@ -16,7 +16,7 @@ A standalone Electron desktop application for job seekers, featuring AI-powered 
 - **Framework**: Electron + React (Vite)
 - **Frontend**: React, TypeScript, Tailwind CSS
 - **Database**: SQLite with Prisma ORM
-- **AI**: OpenAI API (user provides their own API key)
+- **AI**: Claude API (user provides their own API key)
 - **Build**: Electron Builder
 
 ## Getting Started
@@ -24,7 +24,7 @@ A standalone Electron desktop application for job seekers, featuring AI-powered 
 ### Prerequisites
 
 - Node.js 18+ and npm
-- OpenAI API key (get one from [OpenAI Platform](https://platform.openai.com/api-keys))
+- Claude API key (get one from [Anthropic Console](https://console.anthropic.com/settings/keys))
 
 ### Installation
 
@@ -54,7 +54,7 @@ This will start Vite dev server and Electron app.
 
 1. Open the app
 2. Navigate to Settings
-3. Enter your OpenAI API key
+3. Enter your Claude API key
 4. The key will be stored securely on your device
 
 ## Building for Production

@@ -6,9 +6,11 @@ interface ResumeViewerProps {
   resumeId: string;
   onClose: () => void;
   onUpdate?: () => void;
+  /** When true, only View and Download are shown (no Edit). Used for the General Original resume. */
+  readOnly?: boolean;
 }
 
-export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeViewerProps) {
+export default function ResumeViewer({ resumeId, onClose, onUpdate, readOnly = false }: ResumeViewerProps) {
   const [resume, setResume] = useState<Resume | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -20,6 +22,10 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
   useEffect(() => {
     loadResume();
   }, [resumeId]);
+
+  useEffect(() => {
+    if (readOnly && editing) setEditing(false);
+  }, [readOnly, editing]);
 
   const loadResume = async () => {
     if (!resumeId) {
@@ -135,12 +141,14 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
           <div className="flex gap-2">
             {!editing && (
               <>
-                <button
-                  onClick={() => setEditing(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-                >
-                  Edit
-                </button>
+                {!readOnly && (
+                  <button
+                    onClick={() => setEditing(true)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+                  >
+                    Edit
+                  </button>
+                )}
                 <button
                   onClick={handleDownloadWord}
                   className="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700"
@@ -149,7 +157,7 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate }: ResumeView
                 </button>
               </>
             )}
-            {editing && (
+            {editing && !readOnly && (
               <>
                 <button
                   onClick={handleSave}

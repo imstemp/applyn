@@ -4,8 +4,8 @@ import { contextBridge, ipcRenderer } from 'electron';
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld('electronAPI', {
   // Config methods
-  getOpenAIKey: () => ipcRenderer.invoke('config:getOpenAIKey'),
-  setOpenAIKey: (apiKey: string) => ipcRenderer.invoke('config:setOpenAIKey', apiKey),
+  getAnthropicKey: () => ipcRenderer.invoke('config:getAnthropicKey'),
+  setAnthropicKey: (apiKey: string) => ipcRenderer.invoke('config:setAnthropicKey', apiKey),
   
   // Profile methods
   profile: {
@@ -43,6 +43,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   skillsHighlight: {
     analyze: (data: { resumeId: string; jobDescription: string }) => ipcRenderer.invoke('skillsHighlight:analyze', data),
     list: (resumeId?: string) => ipcRenderer.invoke('skillsHighlight:list', resumeId),
+  },
+
+  // Career coach methods
+  coach: {
+    chat: (data: { systemPrompt: string; messages: { role: 'user' | 'assistant'; content: string }[] }) =>
+      ipcRenderer.invoke('coach:chat', data),
   },
 });
 

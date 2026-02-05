@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 
 export interface ProfileData {
   workHistory: any[];
@@ -91,7 +91,7 @@ export async function generateResumeContent(
   ageOptimized: boolean,
   apiKey: string
 ): Promise<any> {
-  const openai = new OpenAI({ apiKey });
+  const anthropic = new Anthropic({ apiKey });
   const baseResume = buildBaseResumeStructure(profileData, ageOptimized);
   const isGeneral = jobType === "General";
   
@@ -219,29 +219,26 @@ CRITICAL REQUIREMENTS:
 - These will be merged with the preserved factual data
 - Return only valid JSON.`;
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "system",
-        content: `You are an expert resume writer with 20+ years of experience. Your specialty is transforming raw information into polished, professional resumes that sound impressive and compelling. You excel at using strong action verbs, achievement-focused language, and industry-standard terminology to make candidates stand out.${ageOptimized ? " SPECIAL FOCUS: You specialize in creating age-optimized resumes that emphasize modern skills, contemporary language, and recent achievements while maintaining professionalism and truthfulness." : ""} CRITICAL RULE: You must preserve ALL factual information EXACTLY as provided - company names (including LLC, Inc., Corp., etc.), job titles/positions, personal information, dates, institution names, degree names. NEVER change, shorten, remove suffixes, or 'improve' factual data. Only enhance descriptions and summaries - factual data must remain identical to the source. FORMATTING RULE: All work experience descriptions MUST be formatted as bullet points, with each bullet on a new line starting with "• " (bullet character followed by space).`,
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-    temperature: 0.7,
-    response_format: { type: "json_object" },
+  const systemPrompt = `You are an expert resume writer with 20+ years of experience. Your specialty is transforming raw information into polished, professional resumes that sound impressive and compelling. You excel at using strong action verbs, achievement-focused language, and industry-standard terminology to make candidates stand out.${ageOptimized ? " SPECIAL FOCUS: You specialize in creating age-optimized resumes that emphasize modern skills, contemporary language, and recent achievements while maintaining professionalism and truthfulness." : ""} CRITICAL RULE: You must preserve ALL factual information EXACTLY as provided - company names (including LLC, Inc., Corp., etc.), job titles/positions, personal information, dates, institution names, degree names. NEVER change, shorten, remove suffixes, or 'improve' factual data. Only enhance descriptions and summaries - factual data must remain identical to the source. FORMATTING RULE: All work experience descriptions MUST be formatted as bullet points, with each bullet on a new line starting with "• " (bullet character followed by space).`;
+
+  const response = await anthropic.messages.create({
+    model: "claude-3-5-haiku-20241022",
+    max_tokens: 4096,
+    system: systemPrompt,
+    messages: [{ role: "user", content: prompt }],
   });
 
-  const content = response.choices[0]?.message?.content;
+  const textBlock = response.content?.[0];
+  const content = textBlock && textBlock.type === "text" ? textBlock.text : null;
   if (!content) {
-    throw new Error("Failed to generate resume content - no response from OpenAI");
+    throw new Error("Failed to generate resume content - no response from Claude");
   }
 
   try {
-    const aiEnhancements = JSON.parse(content);
+    const trimmed = content.trim();
+    const codeBlock = trimmed.match(/^```(?:json)?\s*([\s\S]*?)```$/);
+    const jsonStr = codeBlock ? codeBlock[1].trim() : trimmed;
+    const aiEnhancements = JSON.parse(jsonStr);
     
     // Ensure we preserve all work experiences even if AI doesn't return all of them
     const aiWorkExperience = aiEnhancements.workExperience || [];
@@ -273,7 +270,7 @@ CRITICAL REQUIREMENTS:
 
     return finalResume;
   } catch (parseError) {
-    console.error("Failed to parse OpenAI response:", content);
+    console.error("Failed to parse Claude response:", content);
     throw new Error("Failed to parse resume content from AI response");
   }
 }

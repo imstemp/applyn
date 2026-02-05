@@ -4,8 +4,8 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 declare global {
   interface Window {
     electronAPI: {
-      getOpenAIKey: () => Promise<string | null>;
-      setOpenAIKey: (key: string) => Promise<boolean>;
+      getAnthropicKey: () => Promise<string | null>;
+      setAnthropicKey: (key: string) => Promise<boolean>;
     };
   }
 }
@@ -21,7 +21,8 @@ export default function Settings() {
 
   const loadApiKey = async () => {
     try {
-      const key = await window.electronAPI.getOpenAIKey();
+      if (!window.electronAPI) return;
+      const key = await window.electronAPI.getAnthropicKey();
       if (key) {
         setApiKey(key);
       }
@@ -40,7 +41,11 @@ export default function Settings() {
     setMessage(null);
 
     try {
-      const success = await window.electronAPI.setOpenAIKey(apiKey.trim());
+      if (!window.electronAPI) {
+        setMessage({ type: 'error', text: 'Run the app with npm run electron:dev to save settings.' });
+        return;
+      }
+      const success = await window.electronAPI.setAnthropicKey(apiKey.trim());
       if (success) {
         setMessage({ type: 'success', text: 'API key saved successfully!' });
       } else {
@@ -59,13 +64,13 @@ export default function Settings() {
         <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 rounded-2xl p-8 text-white shadow-xl">
           <h1 className="text-4xl font-bold mb-2">Settings</h1>
           <p className="text-blue-50 text-lg">
-            Configure your OpenAI API key to enable AI-powered features.
+            Configure your Claude API key to enable AI-powered features.
           </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-soft border border-slate-200/50 overflow-hidden">
           <div className="bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-4 border-b border-slate-200">
-            <h2 className="text-xl font-bold text-slate-800">OpenAI API Configuration</h2>
+            <h2 className="text-xl font-bold text-slate-800">Claude API Configuration</h2>
             <p className="text-sm text-slate-700 mt-1">
               Your API key is stored securely and encrypted on your device
             </p>
@@ -73,25 +78,25 @@ export default function Settings() {
           <div className="p-6 space-y-4">
             <div>
               <label htmlFor="apiKey" className="block text-sm font-medium text-slate-700 mb-2">
-                OpenAI API Key
+                Claude API Key
               </label>
               <input
                 type="password"
                 id="apiKey"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk-..."
+                placeholder="sk-ant-..."
                 className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <p className="mt-2 text-sm text-slate-700">
                 Get your API key from{' '}
                 <a
-                  href="https://platform.openai.com/api-keys"
+                  href="https://console.anthropic.com/settings/keys"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-700 underline"
                 >
-                  OpenAI Platform
+                  Anthropic Console
                 </a>
               </p>
             </div>

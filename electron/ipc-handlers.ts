@@ -1,11 +1,10 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import Database from 'better-sqlite3';
-import { getOpenAIKey } from './config';
-import { getOpenAI } from './main';
+import { getAnthropicKey } from './config';
 import { Document, Packer, Paragraph, TextRun, AlignmentType } from 'docx';
 import * as path from 'path';
 import * as fs from 'fs';
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import { generateResumeContent } from './resume-generator';
 import {
   getProfile,
@@ -46,6 +45,37 @@ function getDatabase(): Database.Database {
     db = initializeDatabase();
   }
   return db;
+}
+
+const CLAUDE_MODEL = 'claude-3-5-haiku-20241022';
+
+function parseJsonFromClaude(text: string): any {
+  const trimmed = text.trim();
+  const codeBlock = trimmed.match(/^```(?:json)?\s*([\s\S]*?)```$/);
+  return JSON.parse(codeBlock ? codeBlock[1].trim() : trimmed);
+}
+
+async function callClaude(options: {
+  system: string;
+  messages: { role: 'user' | 'assistant'; content: string }[];
+  maxTokens?: number;
+}): Promise<string> {
+  const apiKey = getAnthropicKey();
+  if (!apiKey) {
+    throw new Error('Claude API key not set. Please configure it in settings.');
+  }
+  const anthropic = new Anthropic({ apiKey });
+  const response = await anthropic.messages.create({
+    model: CLAUDE_MODEL,
+    max_tokens: options.maxTokens ?? 4096,
+    system: options.system,
+    messages: options.messages,
+  });
+  const block = response.content?.[0];
+  if (!block || block.type !== 'text') {
+    throw new Error('No text in Claude response');
+  }
+  return block.text;
 }
 
 // Profile handlers
@@ -95,9 +125,9 @@ ipcMain.handle('resume:get', async (_event, id: string) => {
 
 ipcMain.handle('resume:generateTrue', async (_event, { ageOptimized }: { ageOptimized?: boolean }) => {
   try {
-    const apiKey = getOpenAIKey();
+    const apiKey = getAnthropicKey();
     if (!apiKey) {
-      return { success: false, error: 'OpenAI API key not set. Please configure it in settings.' };
+      return { success: false, error: 'Claude API key not set. Please configure it in settings.' };
     }
     
     const database = getDatabase();
@@ -146,9 +176,9 @@ ipcMain.handle('resume:generateTrue', async (_event, { ageOptimized }: { ageOpti
 
 ipcMain.handle('resume:customize', async (_event, { jobTitle, companyName, jobDescription, ageOptimized }: { jobTitle: string; companyName: string; jobDescription: string; ageOptimized?: boolean }) => {
   try {
-    const apiKey = getOpenAIKey();
+    const apiKey = getAnthropicKey();
     if (!apiKey) {
-      return { success: false, error: 'OpenAI API key not set. Please configure it in settings.' };
+      return { success: false, error: 'Claude API key not set. Please configure it in settings.' };
     }
     
     const database = getDatabase();
@@ -193,9 +223,9 @@ ipcMain.handle('resume:customize', async (_event, { jobTitle, companyName, jobDe
 
 ipcMain.handle('resume:generate', async (_event, { jobType, ageOptimized }: { jobType: string; ageOptimized?: boolean }) => {
   try {
-    const apiKey = getOpenAIKey();
+    const apiKey = getAnthropicKey();
     if (!apiKey) {
-      return { success: false, error: 'OpenAI API key not set. Please configure it in settings.' };
+      return { success: false, error: 'Claude API key not set. Please configure it in settings.' };
     }
     
     const database = getDatabase();
@@ -269,9 +299,9 @@ ipcMain.handle('resume:setActive', async (_event, id: string) => {
 // Cover letter handlers
 ipcMain.handle('coverLetter:generate', async (_event, { resumeId, jobTitle, companyName, jobDescription, personality, length }: any) => {
   try {
-    const apiKey = getOpenAIKey();
+    const apiKey = getAnthropicKey();
     if (!apiKey) {
-      return { success: false, error: 'OpenAI API key not set. Please configure it in settings.' };
+      return { success: false, error: 'Claude API key not set. Please configure it in settings.' };
     }
     
     const database = getDatabase();
@@ -280,8 +310,6 @@ ipcMain.handle('coverLetter:generate', async (_event, { resumeId, jobTitle, comp
     if (!resume) {
       return { success: false, error: 'Resume not found' };
     }
-    
-    const openai = new OpenAI({ apiKey });
     
     const personalityInstructions: Record<string, string> = {
       professional: "Use a professional, polished tone. Be confident but not overly casual.",
@@ -316,22 +344,12 @@ CRITICAL RULES:
 
 Return only the cover letter text, no additional formatting or explanations.`;
     
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a professional cover letter writer. Write compelling, personalized cover letters. CRITICAL: You must ONLY use information explicitly stated in the resume provided. NEVER fabricate, infer, or assume any experience, skills, or qualifications.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
+    const content = await callClaude({
+      system: "You are a professional cover letter writer. Write compelling, personalized cover letters. CRITICAL: You must ONLY use information explicitly stated in the resume provided. NEVER fabricate, infer, or assume any experience, skills, or qualifications.",
+      messages: [{ role: "user", content: prompt }],
+      maxTokens: 2048,
     });
     
-    const content = response.choices[0]?.message?.content;
     if (!content) {
       return { success: false, error: 'Failed to generate cover letter' };
     }
@@ -382,9 +400,9 @@ ipcMain.handle('coverLetter:list', async (_event, resumeId?: string) => {
 // Interview prep handlers
 ipcMain.handle('interviewPrep:generate', async (_event, resumeId: string) => {
   try {
-    const apiKey = getOpenAIKey();
+    const apiKey = getAnthropicKey();
     if (!apiKey) {
-      return { success: false, error: 'OpenAI API key not set. Please configure it in settings.' };
+      return { success: false, error: 'Claude API key not set. Please configure it in settings.' };
     }
     
     const database = getDatabase();
@@ -393,8 +411,6 @@ ipcMain.handle('interviewPrep:generate', async (_event, resumeId: string) => {
     if (!resume) {
       return { success: false, error: 'Resume not found' };
     }
-    
-    const openai = new OpenAI({ apiKey });
     
     const prompt = `Generate 10 relevant interview questions for a ${resume.jobType} position based on the following resume:
 
@@ -406,30 +422,19 @@ Create a mix of:
 - Situational questions (hypothetical scenarios)
 - Questions about the candidate's background
 
-Return a JSON object with a "questions" array containing the question strings.`;
+Return a JSON object with a "questions" array containing the question strings. No other text, only valid JSON.`;
     
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are an interview coach. Generate relevant interview questions in JSON format with a 'questions' array.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      response_format: { type: "json_object" },
+    const content = await callClaude({
+      system: "You are an interview coach. Generate relevant interview questions. Return only valid JSON with a top-level 'questions' array of question strings.",
+      messages: [{ role: "user", content: prompt }],
+      maxTokens: 2048,
     });
     
-    const content = response.choices[0]?.message?.content;
     if (!content) {
       return { success: false, error: 'Failed to generate questions' };
     }
     
-    const parsed = JSON.parse(content);
+    const parsed = parseJsonFromClaude(content);
     const questions = parsed.questions || [];
     
     // Save or update interview prep
@@ -472,9 +477,9 @@ ipcMain.handle('interviewPrep:update', async (_event, { resumeId, notes }: { res
 // Skills highlight handlers
 ipcMain.handle('skillsHighlight:analyze', async (_event, { resumeId, jobDescription }: { resumeId: string; jobDescription: string }) => {
   try {
-    const apiKey = getOpenAIKey();
+    const apiKey = getAnthropicKey();
     if (!apiKey) {
-      return { success: false, error: 'OpenAI API key not set. Please configure it in settings.' };
+      return { success: false, error: 'Claude API key not set. Please configure it in settings.' };
     }
     
     const database = getDatabase();
@@ -484,8 +489,6 @@ ipcMain.handle('skillsHighlight:analyze', async (_event, { resumeId, jobDescript
     if (!resume || !profile) {
       return { success: false, error: 'Resume or profile not found' };
     }
-    
-    const openai = new OpenAI({ apiKey });
     
     // Handle skills as JSON array
     const skillsArray = Array.isArray(profile.skills) ? profile.skills : [];
@@ -505,30 +508,20 @@ Provide a JSON response with:
   "matchedSkills": ["array of skills that match"],
   "missingSkills": ["array of skills mentioned in job but not in resume"],
   "suggestions": ["array of actionable suggestions to improve the resume"]
-}`;
+}
+Return only valid JSON, no other text.`;
     
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a career coach. Analyze resume skills against job descriptions and provide actionable feedback in JSON format.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      response_format: { type: "json_object" },
+    const content = await callClaude({
+      system: "You are a career coach. Analyze resume skills against job descriptions and provide actionable feedback. Return only valid JSON with matchedSkills, missingSkills, and suggestions arrays.",
+      messages: [{ role: "user", content: prompt }],
+      maxTokens: 2048,
     });
     
-    const content = response.choices[0]?.message?.content;
     if (!content) {
       return { success: false, error: 'Failed to analyze skills' };
     }
     
-    const analysis = JSON.parse(content);
+    const analysis = parseJsonFromClaude(content);
     
     // Save analysis
     const skillsHighlight = createOrUpdateSkillsHighlight(database, {
@@ -542,6 +535,24 @@ Provide a JSON response with:
   } catch (error) {
     console.error('Error analyzing skills:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Failed to analyze skills' };
+  }
+});
+
+// Career coach chat handler
+ipcMain.handle('coach:chat', async (_event, { systemPrompt, messages }: { systemPrompt: string; messages: { role: 'user' | 'assistant'; content: string }[] }) => {
+  try {
+    const content = await callClaude({
+      system: systemPrompt,
+      messages,
+      maxTokens: 4096,
+    });
+    if (!content) {
+      return { success: false, error: 'No response from coach' };
+    }
+    return { success: true, data: { content } };
+  } catch (error) {
+    console.error('Coach chat error:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Failed to get coach response' };
   }
 });
 
