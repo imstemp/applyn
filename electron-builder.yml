@@ -1,5 +1,10 @@
 appId: com.applyn.app
 productName: Applyn
+# Where to publish (for releases) and where the app checks for updates
+publish:
+  provider: github
+  owner: imstemp
+  repo: applyn
 directories:
   buildResources: build
   output: dist-electron

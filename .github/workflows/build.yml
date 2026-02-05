@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+  # Run from Actions tab to test the workflow (creates a draft release if no tag)
+  workflow_dispatch:
 
 # Allow creating releases and uploading release assets
 permissions:
