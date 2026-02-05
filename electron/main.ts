@@ -1,12 +1,16 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
+import { autoUpdater } from 'electron-updater';
 import { getAnthropicKey, setAnthropicKey } from './config';
-import { initializeDatabase, closeDatabase } from './db';
-import { setDatabase, setMainWindow } from './ipc-handlers';
+import { closeDatabase } from './db';
+import { setMainWindow } from './ipc-handlers';
 
 // Disable proxy server detection
 app.commandLine.appendSwitch('auto-detect', 'false');
 app.commandLine.appendSwitch('no-proxy-server');
+
+// Disable auto-download (let user confirm first)
+autoUpdater.autoDownload = false;
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -85,11 +89,16 @@ app.whenReady().then(() => {
   // Create window immediately - show it right away
   // Don't wait for database or anything else
   createWindow();
-  
-  // Initialize database lazily in background (only when first IPC call needs it)
-  // The database will be initialized on first use via getDatabase() in ipc-handlers
-  // This prevents blocking the window from showing
-  
+
+  // Check for updates on app start (only when packaged)
+  if (!app.isPackaged) {
+    console.log('Running in dev mode - skipping update check');
+  } else {
+    setTimeout(() => {
+      autoUpdater.checkForUpdates();
+    }, 3000);
+  }
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -111,6 +120,41 @@ ipcMain.handle('config:getAnthropicKey', () => {
 
 ipcMain.handle('config:setAnthropicKey', async (_event, apiKey: string) => {
   return setAnthropicKey(apiKey);
+});
+
+// Auto-updater events
+autoUpdater.on('update-available', (info) => {
+  const win = mainWindow;
+  if (!win) return;
+  dialog.showMessageBox(win, {
+    type: 'info',
+    title: 'Update Available',
+    message: `A new version (${info.version}) is available. Download now?`,
+    buttons: ['Yes', 'No'],
+  }).then((result) => {
+    if (result.response === 0) {
+      autoUpdater.downloadUpdate();
+    }
+  });
+});
+
+autoUpdater.on('update-downloaded', () => {
+  const win = mainWindow;
+  if (!win) return;
+  dialog.showMessageBox(win, {
+    type: 'info',
+    title: 'Update Ready',
+    message: 'Update downloaded. Restart now to install?',
+    buttons: ['Restart', 'Later'],
+  }).then((result) => {
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
+
+autoUpdater.on('error', (err) => {
+  console.error('Update error:', err);
 });
 
 // Import all other IPC handlers

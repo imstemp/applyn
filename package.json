@@ -7,7 +7,7 @@
   "description": "AI-powered job hunting tools for resume generation, cover letters, and interview prep",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run build:electron",
     "build:electron": "tsc -p tsconfig.node.json",
     "electron:dev": "npm run build:electron && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:build": "npm run build && npm run build:electron && electron-builder",
@@ -22,6 +22,7 @@
     "better-sqlite3": "^12.5.0",
     "date-fns": "^4.1.0",
     "docx": "^9.5.1",
+    "electron-updater": "^6.7.3",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "react": "^19.0.0",
