@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     </svg>
                   </div>
                   <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                    JobHunters
+                    Applyn
                   </span>
                 </Link>
               </div>

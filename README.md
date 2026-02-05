@@ -1,4 +1,4 @@
-# JobHunters Toolbox - Desktop App
+# Applyn - Desktop App
 
 A standalone Electron desktop application for job seekers, featuring AI-powered resume generation, cover letter creation, interview preparation, and skills analysis.
 
@@ -92,9 +92,9 @@ All data is stored locally on your device:
 - Config: `{userData}/config.json` (encrypted API key)
 
 The `userData` directory location:
-- **macOS**: `~/Library/Application Support/jobhunterstoolbox`
-- **Windows**: `%APPDATA%/jobhunterstoolbox`
-- **Linux**: `~/.config/jobhunterstoolbox`
+- **macOS**: `~/Library/Application Support/Applyn`
+- **Windows**: `%APPDATA%/Applyn`
+- **Linux**: `~/.config/Applyn`
 
 ## Development
 

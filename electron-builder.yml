@@ -1,5 +1,5 @@
-appId: com.jobhunterstoolbox.app
-productName: JobHunters Toolbox
+appId: com.applyn.app
+productName: Applyn
 directories:
   buildResources: build
   output: dist-electron

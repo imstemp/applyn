@@ -1,9 +1,9 @@
 {
-  "name": "jobhunterstoolbox",
-  "version": "1.0.0",
+  "name": "applyn",
+  "productName": "Applyn",
   "private": true,
   "main": "dist-electron/electron/main.js",
-  "author": "JobHunters Toolbox",
+  "author": "Applyn",
   "description": "AI-powered job hunting tools for resume generation, cover letters, and interview prep",
   "scripts": {
     "dev": "vite",
