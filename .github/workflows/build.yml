@@ -4,8 +4,7 @@ on:
   push:
     tags:
       - 'v*'
-  # Run from Actions tab to test the workflow (creates a draft release if no tag)
-  workflow_dispatch:
+  workflow_dispatch:  # Manual run from Actions tab (builds only; no release unless you use a tag)
 
 # Allow creating releases and uploading release assets
 permissions:
@@ -23,6 +22,9 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
+        with:
+          # Ensure tag ref is available so electron-builder creates the right release
+          fetch-depth: 0
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -33,13 +35,37 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Only publish to GitHub Releases when triggered by a tag push (not manual run)
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
+        if: startsWith(github.ref, 'refs/tags/')
         env:
-          # Set to false to build unsigned macOS app (no certs). Set MAC_CERTS + MAC_CERTS_PASSWORD for signing.
           CSC_IDENTITY_AUTO_DISCOVERY: false
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release: true
           mac_certs: ${{ secrets.MAC_CERTS }}
           mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
+
+      # Manual run: build only (no release created)
+      - name: Build Electron app (no release)
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: samuelmeuli/action-electron-builder@v1
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release: false
+          mac_certs: ${{ secrets.MAC_CERTS }}
+          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
+
+      # Upload installers as workflow artifacts (so you can download from the Actions run)
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: applyn-${{ matrix.os }}
+          path: |
+            dist-electron/*.dmg
+            dist-electron/*.dmg.blockmap
+            dist-electron/*.exe
+          if-no-files-found: warn
