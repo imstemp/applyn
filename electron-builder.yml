@@ -5,6 +5,8 @@ publish:
   provider: github
   owner: imstemp
   repo: applyn
+# Notarize after signing (macOS only)
+afterSign: scripts/notarize.js
 directories:
   buildResources: build
   output: dist-electron
@@ -63,9 +65,8 @@ mac:
         - x64
         - arm64
   category: public.app-category.productivity
-  # Enable notarization (uses APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID from env)
-  notarize:
-    teamId: ${APPLE_TEAM_ID}
+  hardenedRuntime: true
+  gatekeeperAssess: false
 linux:
   target:
     - target: AppImage
