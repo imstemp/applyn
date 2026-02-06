@@ -93,7 +93,7 @@ export default function Settings() {
             <div className="bg-gradient-to-r from-slate-50 to-emerald-50 px-6 py-4 border-b border-slate-200">
               <h2 className="text-xl font-bold text-slate-800">License</h2>
               <p className="text-sm text-slate-700 mt-1">
-                Your Gumroad license key (purchased at $29)
+                Your Lemon Squeezy license key (purchased at $29)
               </p>
             </div>
             <div className="p-6 space-y-4">

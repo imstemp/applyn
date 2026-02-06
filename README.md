@@ -53,21 +53,18 @@ This will start Vite dev server and Electron app.
 ### Configuration
 
 1. Open the app
-2. On first launch, enter your **Gumroad license key** (from your purchase)
+2. On first launch, enter your **Lemon Squeezy license key** (from your purchase)
 3. In Settings, enter your **Claude API key** (BYOK)
 4. Both are stored locally on your device
 
-## Selling with Gumroad ($29 + BYOK)
+## Selling with Lemon Squeezy ($29 + BYOK)
 
-The app uses [Gumroad](https://gumroad.com) for license keys. To sell the app:
+The app uses [Lemon Squeezy](https://lemonsqueezy.com) for license keys. To sell the app:
 
-1. **Create a product** on Gumroad (e.g. $29 one-time). Enable **License keys** in the product settings.
-2. **Set your Gumroad product ID**  
-   - In `electron/gumroad.ts`, set `GUMROAD_PRODUCT_ID` to your product ID (from the product URL or Gumroad dashboard), or set the `GUMROAD_PRODUCT_ID` environment variable when building.
-3. **Set the buy link**  
-   - In `src/pages/Activate.tsx`, set `GUMROAD_BUY_URL` to your Gumroad product URL (e.g. `https://gumroad.com/l/yourapp`).
+1. **Create a product** on Lemon Squeezy (e.g. $29 one-time). Enable **License keys** in the product settings.
+2. **Set the buy link** in `src/pages/Activate.tsx`: set `LEMON_SQUEEZY_BUY_URL` to your Lemon Squeezy checkout URL (e.g. `https://yourstore.lemonsqueezy.com/checkout/...`).
 
-In development, if `GUMROAD_PRODUCT_ID` is not set, license verification is bypassed so you can run the app without a key.
+License validation uses Lemon Squeezy’s [License API](https://docs.lemonsqueezy.com/api/license-api/validate-license-key); no API key is required in the app.
 
 ## Building for Production
 

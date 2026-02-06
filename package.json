@@ -1,6 +1,6 @@
 {
   "name": "applyn",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "productName": "applyn",
   "private": true,
   "main": "dist-electron/electron/main.js",
