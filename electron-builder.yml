@@ -8,9 +8,9 @@ publish:
 # Notarize after signing (macOS only)
 afterSign: scripts/notarize.js
 directories:
-  buildResources: build
+  buildResources: resources
   output: dist-electron
-# Icon path is relative to buildResources (build/); use base name without extension
+# Icon path is relative to buildResources (resources/); use base name without extension
 icon: icon
 files:
   - '!**/.vscode/*'
