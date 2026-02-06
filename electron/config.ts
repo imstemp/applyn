@@ -7,6 +7,7 @@ const CONFIG_FILE = path.join(app.getPath('userData'), 'config.json');
 interface Config {
   anthropicApiKey?: string;
   anthropicApiKeyEncrypted?: string;
+  licenseKey?: string;
 }
 
 function getConfig(): Config {
@@ -66,3 +67,30 @@ export function setAnthropicKey(apiKey: string): boolean {
   }
 }
 
+export function getLicenseKey(): string | null {
+  const config = getConfig();
+  return config.licenseKey?.trim() || null;
+}
+
+export function setLicenseKey(licenseKey: string): boolean {
+  try {
+    const configDir = path.dirname(CONFIG_FILE);
+    if (!fs.existsSync(configDir)) {
+      fs.mkdirSync(configDir, { recursive: true });
+    }
+    let raw: Record<string, unknown> = {};
+    if (fs.existsSync(CONFIG_FILE)) {
+      raw = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
+    }
+    raw.licenseKey = licenseKey.trim();
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(raw, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error saving license key:', error);
+    return false;
+  }
+}
+
+export function clearLicenseKey(): boolean {
+  return setLicenseKey('');
+}

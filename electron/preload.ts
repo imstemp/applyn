@@ -6,6 +6,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Config methods
   getAnthropicKey: () => ipcRenderer.invoke('config:getAnthropicKey'),
   setAnthropicKey: (apiKey: string) => ipcRenderer.invoke('config:setAnthropicKey', apiKey),
+
+  // License (Gumroad) methods
+  license: {
+    get: () => ipcRenderer.invoke('license:get'),
+    verify: (licenseKey: string) => ipcRenderer.invoke('license:verify', licenseKey),
+    clear: () => ipcRenderer.invoke('license:clear'),
+  },
   
   // Profile methods
   profile: {

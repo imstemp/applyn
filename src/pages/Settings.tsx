@@ -6,18 +6,37 @@ declare global {
     electronAPI: {
       getAnthropicKey: () => Promise<string | null>;
       setAnthropicKey: (key: string) => Promise<boolean>;
+      license?: {
+        get: () => Promise<string | null>;
+        verify: (key: string) => Promise<{ success: boolean; error?: string }>;
+        clear: () => Promise<boolean>;
+      };
     };
   }
 }
 
 export default function Settings() {
   const [apiKey, setApiKey] = useState('');
+  const [licenseKey, setLicenseKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [licenseLoading, setLicenseLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     loadApiKey();
+    loadLicense();
   }, []);
+
+  const loadLicense = async () => {
+    try {
+      if (window.electronAPI?.license) {
+        const key = await window.electronAPI.license.get();
+        setLicenseKey(key);
+      }
+    } catch (e) {
+      console.error('Error loading license:', e);
+    }
+  };
 
   const loadApiKey = async () => {
     try {
@@ -68,9 +87,52 @@ export default function Settings() {
           </p>
         </div>
 
+        {/* License (Gumroad) */}
+        {window.electronAPI?.license && (
+          <div className="bg-white rounded-2xl shadow-soft border border-slate-200/50 overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-50 to-emerald-50 px-6 py-4 border-b border-slate-200">
+              <h2 className="text-xl font-bold text-slate-800">License</h2>
+              <p className="text-sm text-slate-700 mt-1">
+                Your Gumroad license key (purchased at $29)
+              </p>
+            </div>
+            <div className="p-6 space-y-4">
+              {licenseKey ? (
+                <>
+                  <p className="text-slate-700">
+                    <span className="text-green-600 font-medium">Licensed</span>
+                    <span className="text-slate-500 ml-2 font-mono text-sm">
+                      ••••{licenseKey.slice(-4)}
+                    </span>
+                  </p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setLicenseLoading(true);
+                      try {
+                        await window.electronAPI!.license!.clear();
+                        setLicenseKey(null);
+                        setMessage({ type: 'success', text: 'License removed. Restart the app to see the activation screen.' });
+                      } finally {
+                        setLicenseLoading(false);
+                      }
+                    }}
+                    disabled={licenseLoading}
+                    className="px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50"
+                  >
+                    {licenseLoading ? 'Removing...' : 'Remove license'}
+                  </button>
+                </>
+              ) : (
+                <p className="text-slate-600 text-sm">No license stored. Use the activation screen to enter your key.</p>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-2xl shadow-soft border border-slate-200/50 overflow-hidden">
           <div className="bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-4 border-b border-slate-200">
-            <h2 className="text-xl font-bold text-slate-800">Claude API Configuration</h2>
+            <h2 className="text-xl font-bold text-slate-800">Claude API Configuration (BYOK)</h2>
             <p className="text-sm text-slate-700 mt-1">
               Your API key is stored securely and encrypted on your device
             </p>

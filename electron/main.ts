@@ -1,7 +1,8 @@
 import { app, BrowserWindow, ipcMain, dialog, Menu } from 'electron';
 import * as path from 'path';
 import { autoUpdater } from 'electron-updater';
-import { getAnthropicKey, setAnthropicKey } from './config';
+import { getAnthropicKey, setAnthropicKey, getLicenseKey, setLicenseKey, clearLicenseKey } from './config';
+import { verifyLicense } from './gumroad';
 import { closeDatabase } from './db';
 import { setMainWindow } from './ipc-handlers';
 
@@ -169,6 +170,17 @@ ipcMain.handle('config:getAnthropicKey', () => {
 ipcMain.handle('config:setAnthropicKey', async (_event, apiKey: string) => {
   return setAnthropicKey(apiKey);
 });
+
+// License (Gumroad) IPC handlers
+ipcMain.handle('license:get', () => getLicenseKey());
+ipcMain.handle('license:verify', async (_event, licenseKey: string) => {
+  const result = await verifyLicense(licenseKey);
+  if (result.success) {
+    setLicenseKey(licenseKey);
+  }
+  return result;
+});
+ipcMain.handle('license:clear', () => clearLicenseKey());
 
 // Auto-updater events
 autoUpdater.on('checking-for-update', () => {

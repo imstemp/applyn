@@ -1,17 +1,7 @@
-import { HashRouter } from 'react-router-dom';
-import AppRouter from './router';
+import LicenseGate from './components/LicenseGate';
 
 function App() {
-  return (
-    <HashRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
-    >
-      <AppRouter />
-    </HashRouter>
-  );
+  return <LicenseGate />;
 }
 
 export default App;
