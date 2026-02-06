@@ -101,7 +101,34 @@ function createWindow() {
       ],
     },
     { role: 'windowMenu' },
-    { role: 'help', submenu: [{ role: 'about' }] },
+    { 
+      role: 'help', 
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        {
+          label: 'Check for Updates...',
+          click: () => {
+            if (!app.isPackaged) {
+              dialog.showMessageBox({
+                type: 'info',
+                title: 'Updates',
+                message: 'Update checks only work in the packaged app.',
+                buttons: ['OK']
+              });
+              return;
+            }
+            dialog.showMessageBox({
+              type: 'info',
+              title: 'Checking for Updates',
+              message: `Current version: ${app.getVersion()}\nChecking for updates...`,
+              buttons: ['OK']
+            });
+            autoUpdater.checkForUpdates();
+          }
+        }
+      ]
+    },
   ] as Electron.MenuItemConstructorOptions[];
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
@@ -144,7 +171,12 @@ ipcMain.handle('config:setAnthropicKey', async (_event, apiKey: string) => {
 });
 
 // Auto-updater events
+autoUpdater.on('checking-for-update', () => {
+  console.log('Checking for updates...');
+});
+
 autoUpdater.on('update-available', (info) => {
+  console.log('Update available:', info.version);
   const win = mainWindow;
   if (!win) return;
   dialog.showMessageBox(win, {
@@ -154,21 +186,45 @@ autoUpdater.on('update-available', (info) => {
     buttons: ['Yes', 'No'],
   }).then((result) => {
     if (result.response === 0) {
-      autoUpdater.downloadUpdate();
+      console.log('User confirmed download, starting update download...');
+      autoUpdater.downloadUpdate().then(() => {
+        console.log('Download started successfully');
+      }).catch((err) => {
+        console.error('Failed to start download:', err);
+        if (win) {
+          dialog.showMessageBox(win, {
+            type: 'error',
+            title: 'Download Failed',
+            message: `Failed to start download: ${err.message}`,
+            buttons: ['OK']
+          });
+        }
+      });
     }
   });
 });
 
-autoUpdater.on('update-downloaded', () => {
+autoUpdater.on('download-progress', (progressObj) => {
+  const logMessage = `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}% (${progressObj.transferred}/${progressObj.total})`;
+  console.log(logMessage);
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  console.log('Update not available. Current version is the latest:', info.version);
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  console.log('Update downloaded:', info.version);
   const win = mainWindow;
   if (!win) return;
   dialog.showMessageBox(win, {
     type: 'info',
     title: 'Update Ready',
-    message: 'Update downloaded. Restart now to install?',
+    message: `Update ${info.version} has been downloaded. Restart now to install?`,
     buttons: ['Restart', 'Later'],
   }).then((result) => {
     if (result.response === 0) {
+      console.log('User chose to restart and install');
       autoUpdater.quitAndInstall();
     }
   });
@@ -176,6 +232,15 @@ autoUpdater.on('update-downloaded', () => {
 
 autoUpdater.on('error', (err) => {
   console.error('Update error:', err);
+  const win = mainWindow;
+  if (win) {
+    dialog.showMessageBox(win, {
+      type: 'error',
+      title: 'Update Error',
+      message: `Failed to check for updates: ${err.message}`,
+      buttons: ['OK']
+    });
+  }
 });
 
 // Import all other IPC handlers
