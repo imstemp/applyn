@@ -701,20 +701,38 @@ ipcMain.handle('resume:downloadWord', async (_event, resumeId: string) => {
             spacing: { after: 120 },
           })
         );
+        const emDash = " – ";
         competencyLines.forEach((line: string) => {
-          children.push(
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: line.startsWith('•') || line.startsWith('-') ? line : `• ${line}`,
-                  size: 22,
-                  font: "Calibri",
-                }),
-              ],
-              bullet: { level: 0 },
-              spacing: { after: 80 },
-            })
-          );
+          const text = (line.startsWith('•') || line.startsWith('-') ? line.slice(1).trim() : line.trim());
+          const dashIdx = text.indexOf(emDash);
+          if (dashIdx !== -1) {
+            const title = text.slice(0, dashIdx).trim();
+            const description = text.slice(dashIdx + emDash.length).trim();
+            children.push(
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `• ${title}`, size: 22, font: "Calibri", bold: true }),
+                  new TextRun({ text: description ? `${emDash}${description}` : "", size: 22, font: "Calibri" }),
+                ],
+                bullet: { level: 0 },
+                spacing: { after: 80 },
+              })
+            );
+          } else {
+            children.push(
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: line.startsWith('•') || line.startsWith('-') ? line : `• ${line}`,
+                    size: 22,
+                    font: "Calibri",
+                  }),
+                ],
+                bullet: { level: 0 },
+                spacing: { after: 80 },
+              })
+            );
+          }
         });
         children.push(new Paragraph({ spacing: { after: 240 } }));
       }

@@ -116,7 +116,7 @@ MANDATORY: You MUST return enhanced descriptions for EVERY work experience and E
 Your task:
 1. CREATE A PROFESSIONAL SUMMARY: Write a compelling 3-4 sentence summary that highlights the candidate's key strengths${ageOptimized ? ", proven expertise, and unique value proposition" : ", years of experience, and unique value proposition"}. Use powerful, confident language${ageOptimized ? " with a modern, contemporary tone" : ""}.
 
-2. CREATE CORE COMPETENCIES: Generate a bullet list of 5-8 key core competencies (e.g., "Strategic Planning", "Team Leadership", "Cross-functional Collaboration") derived from the candidate's work history, skills, and experience. Return as a single string with each competency on its own line starting with "• " (e.g. "• Leadership\\n• Project Management\\n• ...").
+2. CREATE CORE COMPETENCIES: From the candidate's work history, skills, and experience in the Base Resume Structure below, derive 5-8 core competencies in "Title – Description" format. Do not invent competencies; each must be supported by their actual roles, achievements, or skills. Each line: a short bold-style title (e.g. "Team Leadership & Development"), then an em dash "–", then 1-2 sentences describing impact drawn from their experience (e.g. "Built and managed teams up to 15+ members; recruited, mentored, and developed talent"). Return as a single string with each competency on its own line starting with "• ".
 
 3. ENHANCE WORK EXPERIENCE DESCRIPTIONS: For EACH AND EVERY work experience in the Base Resume Structure, enhance the description field only (you must return one enhanced description for each work experience):
    - Format as bullet points: Each achievement should be on its own line starting with "• " (bullet character)
@@ -135,7 +135,7 @@ ${JSON.stringify(baseResume, null, 2)}
 Return a JSON object with ONLY these fields:
 {
   "summary": "A compelling, professional 3-4 sentence summary that makes the candidate sound impressive",
-  "coreCompetencies": "• Core competency one\\n• Core competency two\\n• Core competency three\\n• (5-8 total, one per line, each starting with • )",
+  "coreCompetencies": "• Title One – Brief description of impact and scope.\\n• Title Two – Brief description.\\n• (5-8 total, each line: • Title – Description using em dash – )",
   "workExperience": [
     {
       "description": "• Enhanced bullet point with action verbs and achievements for the FIRST work experience\n• Second bullet point highlighting key achievements\n• Third bullet point with quantifiable results"
@@ -154,7 +154,7 @@ Return a JSON object with ONLY these fields:
 }
 
 CRITICAL REQUIREMENTS:
-- You MUST return coreCompetencies as a string with 5-8 bullet points (each line starting with "• ").
+- You MUST return coreCompetencies as a string with 5-8 lines; each line starts with "• " and uses the format "Title – Description" (em dash between title and description).
 - The workExperience array MUST contain exactly the same number of entries as provided in the Base Resume Structure
 - Each entry in workExperience must correspond to the same position in the original array (first entry = first work experience, second entry = second work experience, etc.)
 - The education array MUST contain exactly the same number of entries as provided in the Base Resume Structure
@@ -171,7 +171,7 @@ MANDATORY: You MUST return enhanced descriptions for EVERY work experience and E
 Your task:
 1. CREATE A TARGETED PROFESSIONAL SUMMARY: Write a compelling 3-4 sentence summary specifically tailored for ${jobType} roles, highlighting relevant experience and skills${ageOptimized ? " with a modern, contemporary tone" : ""}.
 
-2. CREATE CORE COMPETENCIES: Generate a bullet list of 5-8 key core competencies relevant to ${jobType} roles, derived from the candidate's work history, skills, and experience. Return as a single string with each competency on its own line starting with "• " (e.g. "• Leadership\\n• Project Management\\n• ...").
+2. CREATE CORE COMPETENCIES: From the candidate's work history, skills, and experience in the Base Resume Structure below, derive 5-8 core competencies relevant to ${jobType} in "Title – Description" format. Do not invent competencies; each must be supported by their actual roles, achievements, or skills. Each line: short title, then em dash "–", then 1-2 sentences describing impact drawn from their experience. Return as a single string, each line starting with "• ".
 
 3. ENHANCE WORK EXPERIENCE DESCRIPTIONS: For EACH AND EVERY work experience in the Base Resume Structure, enhance the description field only, emphasizing relevance to ${jobType} (you must return one enhanced description for each work experience):
    - Format as bullet points: Each achievement should be on its own line starting with "• " (bullet character)
@@ -191,7 +191,7 @@ ${JSON.stringify(baseResume, null, 2)}
 Return a JSON object with ONLY these fields:
 {
   "summary": "A compelling, professional summary tailored for ${jobType} roles",
-  "coreCompetencies": "• Core competency one relevant to ${jobType}\\n• Core competency two\\n• (5-8 total, one per line, each starting with • )",
+  "coreCompetencies": "• Title One – Description relevant to ${jobType}.\\n• Title Two – Description.\\n• (5-8 total, each line: • Title – Description with em dash – )",
   "workExperience": [
     {
       "description": "• Enhanced bullet point with action verbs and achievements relevant to ${jobType} for the FIRST work experience\n• Second bullet point highlighting key achievements relevant to ${jobType}\n• Third bullet point with quantifiable results"
@@ -210,7 +210,7 @@ Return a JSON object with ONLY these fields:
 }
 
 CRITICAL REQUIREMENTS:
-- You MUST return coreCompetencies as a string with 5-8 bullet points (each line starting with "• ").
+- You MUST return coreCompetencies as a string with 5-8 lines; each line starts with "• " and uses "Title – Description" format (em dash between title and description).
 - The workExperience array MUST contain exactly the same number of entries as provided in the Base Resume Structure
 - Each entry in workExperience must correspond to the same position in the original array (first entry = first work experience, second entry = second work experience, etc.)
 - The education array MUST contain exactly the same number of entries as provided in the Base Resume Structure
