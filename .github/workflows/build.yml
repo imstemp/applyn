@@ -40,13 +40,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # macOS only: decode base64 cert to .p12 so electron-builder can sign
+      - name: Import macOS certificate
+        if: matrix.os == 'macos-latest'
+        env:
+          MAC_CERTS: ${{ secrets.MAC_CERTS }}
+        run: |
+          echo "$MAC_CERTS" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          echo "CSC_LINK=$RUNNER_TEMP/cert.p12" >> $GITHUB_ENV
+
       # Only publish to GitHub Releases when triggered by a tag push (not manual run)
       - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
         if: startsWith(github.ref, 'refs/tags/')
+        uses: samuelmeuli/action-electron-builder@v1
         env:
-          # Provide cert to electron-builder (base64 cert and password)
-          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_LINK: ${{ env.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -57,7 +65,7 @@ jobs:
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: samuelmeuli/action-electron-builder@v1
         env:
-          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_LINK: ${{ env.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
