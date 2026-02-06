@@ -345,7 +345,7 @@ export const coaches: Coach[] = [
     title: "Resume & LinkedIn Coach",
     specialization: "resume_linkedin",
     photoUrl: `${import.meta.env.BASE_URL}coaches/jordan-lee.jpg`,
-    bio: `Expert in resumes and LinkedIn profiles that get noticed. Helps you present your experience clearly with ATS-friendly formatting, compelling bullet points, and strategic positioning for your target roles.`,
+    bio: `Helps you craft ATS-friendly resumes and LinkedIn profiles that get noticed by recruiters and hiring managers.`,
     systemPrompt: JORDAN_LEE_SYSTEM_PROMPT,
   },
   {
@@ -354,7 +354,7 @@ export const coaches: Coach[] = [
     title: "Career Transition Coach",
     specialization: "career_transition",
     photoUrl: `${import.meta.env.BASE_URL}coaches/morgan-reed.png`,
-    bio: `Specializes in career transitions, pivots, and "what's next" moments. Helps you identify transferable skills, explore new paths, and build a strategic transition plan with confidence and clarity.`,
+    bio: `Guides you through career transitions and pivots with strategic planning and confidence building.`,
     backstory: `Morgan has navigated several major career shifts—from operations at a logistics company to HR at a startup, then to career coaching, and now to specializing in career transitions. They understand firsthand how disorienting and exciting it can be to change paths.
 
 Morgan's philosophy: Most people stay in careers they've outgrown because the path forward isn't clear. They're not stuck because they lack skills or ambition—they're stuck because they haven't mapped out what "next" looks like. Morgan helps people see options they didn't know existed, name skills they didn't realize were transferable, and take small steps that build momentum.
@@ -372,7 +372,7 @@ Outside of coaching, Morgan reads voraciously about career trends (remote work, 
     title: "Salary Negotiation & Compensation Coach",
     specialization: "salary_negotiation",
     photoUrl: `${import.meta.env.BASE_URL}coaches/taylor-kim.png`,
-    bio: `Expert in salary negotiation and compensation strategy. Helps you research market value, prepare for negotiations, and approach offers, raises, and equity conversations with data-driven confidence.`,
+    bio: `Helps you negotiate job offers, raises, and equity with data-driven strategies and confidence.`,
     backstory: `Taylor started their career in HR and talent acquisition at a Fortune 500 tech company, where they saw firsthand how compensation decisions are made—and how much room there usually is to negotiate. They were frustrated by how many talented candidates (especially women and people from underrepresented groups) accepted first offers without negotiating, leaving tens of thousands of dollars on the table.
 
 After moving into career coaching, Taylor became obsessed with closing the negotiation gap. They've coached hundreds of people through salary negotiations—from new grads negotiating their first offer to executives negotiating multi-million dollar packages. Taylor has helped clients secure raises from 10% to 40%, negotiate remote work arrangements, and navigate complex equity structures.
