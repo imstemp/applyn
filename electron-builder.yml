@@ -1,5 +1,5 @@
 appId: com.applyn.app
-productName: Applyn
+productName: applyn
 # Where to publish (for releases) and where the app checks for updates
 publish:
   provider: github

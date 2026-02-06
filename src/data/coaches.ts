@@ -87,7 +87,7 @@ export const coaches: Coach[] = [
     name: "Jordan Lee",
     title: "Resume & LinkedIn Coach",
     specialization: "resume_linkedin",
-    photoUrl: "",
+    photoUrl: `${import.meta.env.BASE_URL}coaches/jordan-lee.jpg`,
     bio: `Jordan Lee specializes in resumes and LinkedIn profiles that get noticed. Whether you're applying through ATS systems or networking, Jordan helps you present your experience clearly and compellingly.
 
 **I can help with:**
