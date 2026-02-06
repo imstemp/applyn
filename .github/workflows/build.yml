@@ -79,5 +79,6 @@ jobs:
           path: |
             dist-electron/*.dmg
             dist-electron/*.dmg.blockmap
+            dist-electron/*.zip
             dist-electron/*.exe
           if-no-files-found: warn
