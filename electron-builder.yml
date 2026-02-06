@@ -10,7 +10,8 @@ afterSign: scripts/notarize.js
 directories:
   buildResources: build
   output: dist-electron
-icon: build/icon
+# Icon path is relative to buildResources (build/); use base name without extension
+icon: icon
 files:
   - '!**/.vscode/*'
   - '!src/**/*'

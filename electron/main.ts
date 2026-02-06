@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, Menu } from 'electron';
 import * as path from 'path';
 import { autoUpdater } from 'electron-updater';
 import { getAnthropicKey, setAnthropicKey } from './config';
@@ -83,6 +83,27 @@ function createWindow() {
   
   // Set main window for IPC handlers
   setMainWindow(mainWindow);
+
+  // Custom app menu: View without Reload / Force Reload / Developer Tools (feels like an app, not a browser)
+  const isMac = process.platform === 'darwin';
+  const template: Electron.MenuItemConstructorOptions[] = [
+    ...(isMac ? [{ role: 'appMenu' as const }] : []),
+    { role: 'fileMenu' },
+    { role: 'editMenu' },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'resetZoom', accelerator: 'CommandOrControl+0' },
+        { role: 'zoomIn', accelerator: 'CommandOrControl+Plus' },
+        { role: 'zoomOut', accelerator: 'CommandOrControl+-' },
+        { type: 'separator' },
+        { role: 'togglefullscreen', accelerator: 'F11' },
+      ],
+    },
+    { role: 'windowMenu' },
+    { role: 'help', submenu: [{ role: 'about' }] },
+  ] as Electron.MenuItemConstructorOptions[];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 app.whenReady().then(() => {
