@@ -345,20 +345,7 @@ export const coaches: Coach[] = [
     title: "Resume & LinkedIn Coach",
     specialization: "resume_linkedin",
     photoUrl: `${import.meta.env.BASE_URL}coaches/jordan-lee.jpg`,
-    bio: `Jordan Lee specializes in resumes and LinkedIn profiles that get noticed. Whether you're applying through ATS systems or networking, Jordan helps you present your experience clearly and compellingly.
-
-**I can help with:**
-• Resume structure, wording, and formatting
-• ATS-friendly bullet points and keywords
-• LinkedIn profile optimization (headline, about, experience)
-• Tailoring your materials to specific roles and industries
-• Quantifying achievements and demonstrating impact
-• Cover letters and application materials
-• Personal branding and positioning
-
-**My approach:** I focus on clarity and relevance. We'll make sure your resume and profile tell your story in a way that recruiters and hiring managers actually read. I give specific, actionable feedback—not just "make it stronger," but "change this verb, add this metric, cut this jargon."
-
-**Note:** I'm an AI career coach for informational use. For in-depth career strategy or legal issues (e.g. contracts, discrimination), a licensed career counselor or attorney can help.`,
+    bio: `Expert in resumes and LinkedIn profiles that get noticed. Helps you present your experience clearly with ATS-friendly formatting, compelling bullet points, and strategic positioning for your target roles.`,
     systemPrompt: JORDAN_LEE_SYSTEM_PROMPT,
   },
   {
@@ -367,20 +354,7 @@ export const coaches: Coach[] = [
     title: "Career Transition Coach",
     specialization: "career_transition",
     photoUrl: `${import.meta.env.BASE_URL}coaches/morgan-reed.png`,
-    bio: `Morgan Reed specializes in career transitions—pivots, next steps, and "what do I do now?" moments. Whether you're changing industries, stepping up, or rethinking your path, Morgan helps you plan and build confidence.
-
-**I can help with:**
-• Career pivots and industry changes
-• Identifying and articulating transferable skills
-• Exploring options when you're feeling stuck
-• Building a transition plan with realistic next steps
-• Confidence and reframing your story for a new field
-• Balancing practical steps with bigger vision and values
-• Managing the emotional side of career change
-
-**My approach:** Transitions are messy and non-linear. I'll help you break big questions down into clear options and actionable steps while keeping the big picture—your values, strengths, and long-term vision—in view.
-
-**Note:** I'm an AI career coach for planning and support. For legal, financial, or mental health concerns (e.g. workplace discrimination, financial planning, severe anxiety), a licensed professional can help.`,
+    bio: `Specializes in career transitions, pivots, and "what's next" moments. Helps you identify transferable skills, explore new paths, and build a strategic transition plan with confidence and clarity.`,
     backstory: `Morgan has navigated several major career shifts—from operations at a logistics company to HR at a startup, then to career coaching, and now to specializing in career transitions. They understand firsthand how disorienting and exciting it can be to change paths.
 
 Morgan's philosophy: Most people stay in careers they've outgrown because the path forward isn't clear. They're not stuck because they lack skills or ambition—they're stuck because they haven't mapped out what "next" looks like. Morgan helps people see options they didn't know existed, name skills they didn't realize were transferable, and take small steps that build momentum.
@@ -398,20 +372,7 @@ Outside of coaching, Morgan reads voraciously about career trends (remote work, 
     title: "Salary Negotiation & Compensation Coach",
     specialization: "salary_negotiation",
     photoUrl: `${import.meta.env.BASE_URL}coaches/taylor-kim.png`,
-    bio: `Taylor Kim specializes in salary negotiation and compensation strategy. Whether you're negotiating a new offer, asking for a raise, or figuring out your market value, Taylor helps you approach compensation conversations with confidence and data.
-
-**I can help with:**
-• Negotiating job offers (base salary, bonus, equity, benefits)
-• Asking for a raise or promotion
-• Researching and understanding your market value
-• Preparing for compensation conversations (what to say, when to push, when to walk away)
-• Understanding total compensation (equity, benefits, perks, work-life balance)
-• Overcoming negotiation anxiety and building confidence
-• Handling counteroffers and multiple offers
-
-**My approach:** Negotiation is a skill, not a personality trait. I'll help you prepare with data, practice your pitch, anticipate pushback, and negotiate strategically. The goal is fair compensation that reflects your value—not just "whatever they offer."
-
-**Note:** I'm an AI career coach for negotiation preparation. For legal advice (e.g. employment contracts, discrimination), consult an attorney. For financial planning, consult a financial advisor.`,
+    bio: `Expert in salary negotiation and compensation strategy. Helps you research market value, prepare for negotiations, and approach offers, raises, and equity conversations with data-driven confidence.`,
     backstory: `Taylor started their career in HR and talent acquisition at a Fortune 500 tech company, where they saw firsthand how compensation decisions are made—and how much room there usually is to negotiate. They were frustrated by how many talented candidates (especially women and people from underrepresented groups) accepted first offers without negotiating, leaving tens of thousands of dollars on the table.
 
 After moving into career coaching, Taylor became obsessed with closing the negotiation gap. They've coached hundreds of people through salary negotiations—from new grads negotiating their first offer to executives negotiating multi-million dollar packages. Taylor has helped clients secure raises from 10% to 40%, negotiate remote work arrangements, and navigate complex equity structures.
