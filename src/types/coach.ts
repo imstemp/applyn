@@ -5,6 +5,7 @@ export interface Coach {
   specialization: string;
   photoUrl: string;
   bio: string;
+  backstory?: string;
   systemPrompt: string;
 }
 
