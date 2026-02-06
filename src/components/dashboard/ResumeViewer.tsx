@@ -243,16 +243,27 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate, readOnly = f
                 </div>
               )}
 
-              {/* 2. Core Competencies */}
+              {/* 2. Core Competencies (Title – Description format) */}
               {content.coreCompetencies && (
                 <div>
                   <h3 className="text-lg font-bold mb-2 text-slate-900">Core Competencies</h3>
-                  <div className="text-slate-700">
+                  <div className="text-slate-700 space-y-1.5">
                     {content.coreCompetencies.split('\n').map((line: string, lineIdx: number) => {
                       const trimmedLine = line.trim();
                       if (!trimmedLine) return null;
-                      const bulletLine = trimmedLine.startsWith('•') || trimmedLine.startsWith('-') ? trimmedLine : `• ${trimmedLine}`;
-                      return <p key={lineIdx} className="mb-1">{bulletLine}</p>;
+                      const text = trimmedLine.startsWith('•') || trimmedLine.startsWith('-') ? trimmedLine.slice(1).trim() : trimmedLine;
+                      const dashIdx = text.indexOf(' – ');
+                      if (dashIdx !== -1) {
+                        const title = text.slice(0, dashIdx).trim();
+                        const description = text.slice(dashIdx + 3).trim();
+                        return (
+                          <p key={lineIdx} className="mb-1">
+                            <span className="font-semibold text-slate-900">• {title}</span>
+                            {description && <><span className="text-slate-700"> – </span><span>{description}</span></>}
+                          </p>
+                        );
+                      }
+                      return <p key={lineIdx} className="mb-1">• {text}</p>;
                     })}
                   </div>
                 </div>

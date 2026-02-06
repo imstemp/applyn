@@ -13,8 +13,13 @@ function formatResumeForCoach(content: any): string {
     parts.push(`CONTACT / CANDIDATE:\n${contact}`);
   }
   if (content.summary) parts.push(`PROFESSIONAL SUMMARY:\n${content.summary}`);
-  if (content.coreCompetencies && Array.isArray(content.coreCompetencies)) {
-    parts.push("CORE COMPETENCIES:\n" + content.coreCompetencies.map((s: string) => `• ${s}`).join("\n"));
+  if (content.coreCompetencies) {
+    const raw = typeof content.coreCompetencies === "string"
+      ? content.coreCompetencies.split("\n").map((s: string) => s.trim()).filter(Boolean)
+      : Array.isArray(content.coreCompetencies)
+        ? content.coreCompetencies.map((s: string) => (s.startsWith("•") ? s : `• ${s}`))
+        : [];
+    if (raw.length) parts.push("CORE COMPETENCIES:\n" + raw.join("\n"));
   }
   if (content.workExperience && Array.isArray(content.workExperience)) {
     const expBlocks = content.workExperience.map((exp: any) => {
