@@ -711,7 +711,7 @@ ipcMain.handle('resume:downloadWord', async (_event, resumeId: string) => {
             children.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `• ${title}`, size: 22, font: "Calibri", bold: true }),
+                  new TextRun({ text: title, size: 22, font: "Calibri", bold: true }),
                   new TextRun({ text: description ? `${emDash}${description}` : "", size: 22, font: "Calibri" }),
                 ],
                 bullet: { level: 0 },
@@ -723,7 +723,7 @@ ipcMain.handle('resume:downloadWord', async (_event, resumeId: string) => {
               new Paragraph({
                 children: [
                   new TextRun({
-                    text: line.startsWith('•') || line.startsWith('-') ? line : `• ${line}`,
+                    text: text,
                     size: 22,
                     font: "Calibri",
                   }),
@@ -807,11 +807,12 @@ ipcMain.handle('resume:downloadWord', async (_event, resumeId: string) => {
             .filter((line: string) => line.length > 0);
           
           lines.forEach((line: string) => {
+            const text = (line.startsWith('•') || line.startsWith('-') ? line.slice(1).trim() : line);
             children.push(
               new Paragraph({
                 children: [
                   new TextRun({
-                    text: line.startsWith('•') || line.startsWith('-') ? line : `• ${line}`,
+                    text: text,
                     size: 22,
                     font: "Calibri",
                   }),

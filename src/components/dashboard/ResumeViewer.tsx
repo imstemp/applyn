@@ -282,8 +282,8 @@ export default function ResumeViewer({ resumeId, onClose, onUpdate, readOnly = f
                           {exp.description.split('\n').map((line: string, lineIdx: number) => {
                             const trimmedLine = line.trim();
                             if (!trimmedLine) return null;
-                            const bulletLine = trimmedLine.startsWith('•') || trimmedLine.startsWith('-') ? trimmedLine : `• ${trimmedLine}`;
-                            return <p key={lineIdx} className="mb-1">{bulletLine}</p>;
+                            const text = trimmedLine.startsWith('•') || trimmedLine.startsWith('-') ? trimmedLine.slice(1).trim() : trimmedLine;
+                            return <p key={lineIdx} className="mb-1">• {text}</p>;
                           })}
                         </div>
                       )}
