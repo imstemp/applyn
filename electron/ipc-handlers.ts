@@ -297,7 +297,7 @@ ipcMain.handle('resume:setActive', async (_event, id: string) => {
 });
 
 // Cover letter handlers
-ipcMain.handle('coverLetter:generate', async (_event, { resumeId, jobTitle, companyName, jobDescription, personality, length }: any) => {
+ipcMain.handle('coverLetter:generate', async (_event, { resumeId, jobTitle, companyName, jobDescription, additionalInfo, personality, length }: any) => {
   try {
     const apiKey = getAnthropicKey();
     if (!apiKey) {
@@ -332,6 +332,7 @@ ${JSON.stringify(resume.content, null, 2)}
 
 Job Description:
 ${jobDescription}
+${additionalInfo ? `\nAdditional Information (incorporate into the cover letter):\n${additionalInfo}` : ""}
 
 WRITING STYLE REQUIREMENTS:
 - Personality/Tone: ${personalityInstructions[personality || 'professional']}
@@ -341,11 +342,12 @@ CRITICAL RULES:
 1. ONLY USE INFORMATION FROM THE RESUME: You may ONLY reference experiences, skills, education, and qualifications that are EXPLICITLY stated in the resume.
 2. DO NOT MAKE UP EXPERIENCE: Never claim qualifications, technologies, tools, or experiences that are not explicitly listed in the resume.
 3. BE TRUTHFUL AND ACCURATE: Never claim qualifications that are not explicitly listed in the resume.
+${additionalInfo ? `4. APPLICANT EMPHASIS - YOU MUST FOLLOW THIS: The applicant wants you to specifically highlight or call out the following in the cover letter. Incorporate these points prominently when the relevant information exists in the resume:\n\n${additionalInfo}\n` : ""}
 
 Return only the cover letter text, no additional formatting or explanations.`;
     
     const content = await callClaude({
-      system: "You are a professional cover letter writer. Write compelling, personalized cover letters. CRITICAL: You must ONLY use information explicitly stated in the resume provided. NEVER fabricate, infer, or assume any experience, skills, or qualifications.",
+      system: "You are a professional cover letter writer. Write compelling, personalized cover letters. CRITICAL: You must ONLY use information explicitly stated in the resume provided. NEVER fabricate, infer, or assume any experience, skills, or qualifications. When the applicant provides additional information about what to emphasize (e.g., 'point out X years in Y role'), you MUST incorporate those points prominently in the cover letter when the resume supports them.",
       messages: [{ role: "user", content: prompt }],
       maxTokens: 2048,
     });
