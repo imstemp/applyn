@@ -8,6 +8,7 @@ export default function CoverLetterGenerator() {
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
   const [personality, setPersonality] = useState<"professional" | "friendly" | "enthusiastic" | "formal" | "conversational">("professional");
   const [length, setLength] = useState<"short" | "medium" | "long">("medium");
   const [generatedLetter, setGeneratedLetter] = useState("");
@@ -47,6 +48,7 @@ export default function CoverLetterGenerator() {
         jobTitle,
         companyName,
         jobDescription,
+        additionalInfo: additionalInfo.trim() || undefined,
         personality,
         length,
       });
@@ -116,6 +118,16 @@ export default function CoverLetterGenerator() {
               placeholder="Paste the job description here..."
               className="w-full border border-slate-300 rounded-xl px-4 py-3"
               rows={6}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Additional Information</label>
+            <textarea
+              value={additionalInfo}
+              onChange={(e) => setAdditionalInfo(e.target.value)}
+              placeholder="e.g., referral name, specific requirements to address, company research, or other context..."
+              className="w-full border border-slate-300 rounded-xl px-4 py-3"
+              rows={3}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
