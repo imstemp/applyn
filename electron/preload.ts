@@ -37,6 +37,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   coverLetter: {
     generate: (data: any) => ipcRenderer.invoke('coverLetter:generate', data),
     list: (resumeId?: string) => ipcRenderer.invoke('coverLetter:list', resumeId),
+    downloadWord: (data: { content: string; jobTitle?: string; companyName?: string }) =>
+      ipcRenderer.invoke('coverLetter:downloadWord', data),
   },
   
   // Interview prep methods

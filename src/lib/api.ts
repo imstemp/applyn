@@ -21,6 +21,8 @@ declare global {
       coverLetter: {
         generate: (data: any) => Promise<{ success: boolean; data?: any; error?: string }>;
         list: (resumeId?: string) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+        downloadWord: (data: { content: string; jobTitle?: string; companyName?: string }) =>
+          Promise<{ success: boolean; filePath?: string; error?: string }>;
       };
       interviewPrep: {
         generate: (resumeId: string) => Promise<{ success: boolean; data?: any; error?: string }>;
@@ -96,6 +98,10 @@ export const api = {
     list: async (resumeId?: string) => {
       if (!window.electronAPI) return ELECTRON_UNAVAILABLE;
       return window.electronAPI.coverLetter.list(resumeId);
+    },
+    downloadWord: async (data: { content: string; jobTitle?: string; companyName?: string }) => {
+      if (!window.electronAPI) return ELECTRON_UNAVAILABLE;
+      return window.electronAPI.coverLetter.downloadWord(data);
     },
   },
   interviewPrep: {

@@ -222,7 +222,7 @@ CRITICAL REQUIREMENTS:
   const systemPrompt = `You are an expert resume writer with 20+ years of experience. Your specialty is transforming raw information into polished, professional resumes that sound impressive and compelling. You excel at using strong action verbs, achievement-focused language, and industry-standard terminology to make candidates stand out.${ageOptimized ? " SPECIAL FOCUS: You specialize in creating age-optimized resumes that emphasize modern skills, contemporary language, and recent achievements while maintaining professionalism and truthfulness." : ""} CRITICAL RULE: You must preserve ALL factual information EXACTLY as provided - company names (including LLC, Inc., Corp., etc.), job titles/positions, personal information, dates, institution names, degree names. NEVER change, shorten, remove suffixes, or 'improve' factual data. Only enhance descriptions and summaries - factual data must remain identical to the source. FORMATTING RULE: All work experience descriptions MUST be formatted as bullet points, with each bullet on a new line starting with "• " (bullet character followed by space).`;
 
   const response = await anthropic.messages.create({
-    model: "claude-3-5-haiku-20241022",
+    model: "claude-haiku-4-5-20251001",
     max_tokens: 4096,
     system: systemPrompt,
     messages: [{ role: "user", content: prompt }],

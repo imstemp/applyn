@@ -47,7 +47,7 @@ function getDatabase(): Database.Database {
   return db;
 }
 
-const CLAUDE_MODEL = 'claude-3-5-haiku-20241022';
+const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 
 function parseJsonFromClaude(text: string): any {
   const trimmed = text.trim();
@@ -338,6 +338,10 @@ WRITING STYLE REQUIREMENTS:
 - Personality/Tone: ${personalityInstructions[personality || 'professional']}
 - Length: ${lengthInstructions[length || 'medium']}
 
+FORMATTING RULES:
+- Start the letter immediately with "Dear Hiring Manager," (or "Dear [Name]," if a hiring contact is known). Do NOT include any header above this—no contact info, date, or address.
+- End with "Sincerely," on one line followed immediately (no blank line) by the candidate's name on the next line.
+
 CRITICAL RULES:
 1. ONLY USE INFORMATION FROM THE RESUME: You may ONLY reference experiences, skills, education, and qualifications that are EXPLICITLY stated in the resume.
 2. DO NOT MAKE UP EXPERIENCE: Never claim qualifications, technologies, tools, or experiences that are not explicitly listed in the resume.
@@ -347,7 +351,7 @@ ${additionalInfo ? `4. APPLICANT EMPHASIS - YOU MUST FOLLOW THIS: The applicant 
 Return only the cover letter text, no additional formatting or explanations.`;
     
     const content = await callClaude({
-      system: "You are a professional cover letter writer. Write compelling, personalized cover letters. CRITICAL: You must ONLY use information explicitly stated in the resume provided. NEVER fabricate, infer, or assume any experience, skills, or qualifications. When the applicant provides additional information about what to emphasize (e.g., 'point out X years in Y role'), you MUST incorporate those points prominently in the cover letter when the resume supports them.",
+      system: "You are a professional cover letter writer. Write compelling, personalized cover letters. FORMAT: Start with 'Dear Hiring Manager,' — no header, date, or contact info above it. End with 'Sincerely,' followed immediately (no blank line) by the candidate's name. CRITICAL: You must ONLY use information explicitly stated in the resume provided. NEVER fabricate, infer, or assume any experience, skills, or qualifications. When the applicant provides additional information about what to emphasize (e.g., 'point out X years in Y role'), you MUST incorporate those points prominently in the cover letter when the resume supports them.",
       messages: [{ role: "user", content: prompt }],
       maxTokens: 2048,
     });
@@ -396,6 +400,77 @@ ipcMain.handle('coverLetter:list', async (_event, resumeId?: string) => {
   } catch (error) {
     console.error('Error fetching cover letters:', error);
     return { success: false, error: 'Failed to fetch cover letters' };
+  }
+});
+
+ipcMain.handle('coverLetter:downloadWord', async (_event, { content, jobTitle, companyName }: { content: string; jobTitle?: string; companyName?: string }) => {
+  try {
+    if (!content || !content.trim()) {
+      return { success: false, error: 'No cover letter content to export' };
+    }
+
+    const paragraphs = content
+      .split(/\n\n+/)
+      .map((para) => para.trim())
+      .filter((p) => p.length > 0);
+
+    const docChildren: any[] = [];
+    paragraphs.forEach((para, paraIdx) => {
+      const lines = para.split('\n');
+      lines.forEach((line, idx) => {
+        docChildren.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: line.trim(),
+                size: 22,
+                font: 'Calibri',
+              }),
+            ],
+            spacing: { after: idx < lines.length - 1 ? 80 : 240 },
+          })
+        );
+      });
+      if (paraIdx < paragraphs.length - 1) {
+        docChildren.push(new Paragraph({ spacing: { after: 240 } }));
+      }
+    });
+
+    const doc = new Document({
+      sections: [
+        {
+          children: docChildren,
+        },
+      ],
+    });
+
+    const buffer = Buffer.from(await Packer.toBuffer(doc));
+
+    let cleanFilename = [jobTitle, companyName].filter(Boolean).join(' - ');
+    if (cleanFilename) {
+      cleanFilename = cleanFilename
+        .replace(/[<>:"/\\|?*]/g, '')
+        .replace(/\s+/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+    if (!cleanFilename) cleanFilename = 'CoverLetter';
+
+    const saveResult = await dialog.showSaveDialog(mainWindow!, {
+      title: 'Save Cover Letter',
+      defaultPath: `${cleanFilename}.docx`,
+      filters: [{ name: 'Word Documents', extensions: ['docx'] }],
+    });
+
+    if (!saveResult.canceled && saveResult.filePath) {
+      fs.writeFileSync(saveResult.filePath, buffer);
+      return { success: true, filePath: saveResult.filePath };
+    }
+
+    return { success: false, error: 'Save cancelled' };
+  } catch (error) {
+    console.error('Error generating cover letter Word document:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Failed to generate Word document' };
   }
 });
 

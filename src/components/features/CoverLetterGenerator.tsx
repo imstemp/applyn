@@ -14,6 +14,37 @@ export default function CoverLetterGenerator() {
   const [generatedLetter, setGeneratedLetter] = useState("");
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    if (!generatedLetter) return;
+    try {
+      await navigator.clipboard.writeText(generatedLetter);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      alert("Failed to copy to clipboard");
+    }
+  };
+
+  const handleDownloadWord = async () => {
+    if (!generatedLetter) return;
+    try {
+      const response = await api.coverLetter.downloadWord({
+        content: generatedLetter,
+        jobTitle,
+        companyName,
+      });
+      if (response.success && response.filePath) {
+        alert(`Cover letter saved to: ${response.filePath}`);
+      } else if (!response.success && response.error && response.error !== "Save cancelled") {
+        alert(response.error);
+      }
+    } catch (error) {
+      console.error("Error downloading cover letter:", error);
+      alert("An error occurred while downloading");
+    }
+  };
 
   // Auto-fill fields when a customized resume is selected
   useEffect(() => {
@@ -170,8 +201,22 @@ export default function CoverLetterGenerator() {
 
       {generatedLetter && (
         <div className="bg-white rounded-2xl shadow-soft border border-slate-200/50 overflow-hidden">
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-slate-200">
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <h2 className="text-xl font-bold text-slate-800">Generated Cover Letter</h2>
+            <div className="flex gap-2">
+              <button
+                onClick={handleCopy}
+                className="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 text-sm font-medium"
+              >
+                {copied ? "Copied!" : "Copy Text"}
+              </button>
+              <button
+                onClick={handleDownloadWord}
+                className="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 text-sm font-medium"
+              >
+                Download Word
+              </button>
+            </div>
           </div>
           <div className="p-6">
             <div className="prose max-w-none">
