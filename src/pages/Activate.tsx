@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-/** Replace with your Lemon Squeezy checkout URL, e.g. https://yoursite.lemonsqueezy.com/checkout/... */
-const LEMON_SQUEEZY_BUY_URL = 'https://applyn.lemonsqueezy.com/checkout/YOUR_PRODUCT_ID';
+/** Replace with your Gumroad product URL, e.g. https://yoursite.gumroad.com/l/product */
+const GUMROAD_BUY_URL = 'https://applyn.gumroad.com/l/YOUR_PRODUCT';
 
 declare global {
   interface Window {
@@ -98,12 +98,12 @@ export default function Activate({ onActivated }: ActivateProps) {
             <p className="text-center text-sm text-slate-600">
               Don&apos;t have a license?{' '}
               <a
-                href={LEMON_SQUEEZY_BUY_URL}
+                href={GUMROAD_BUY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                Buy on Lemon Squeezy — $29
+                Buy on Gumroad — $29
               </a>
             </p>
           </div>

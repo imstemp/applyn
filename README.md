@@ -53,18 +53,19 @@ This will start Vite dev server and Electron app.
 ### Configuration
 
 1. Open the app
-2. On first launch, enter your **Lemon Squeezy license key** (from your purchase)
+2. On first launch, enter your **Gumroad license key** (from your purchase)
 3. In Settings, enter your **Claude API key** (BYOK)
 4. Both are stored locally on your device
 
-## Selling with Lemon Squeezy ($29 + BYOK)
+## Selling with Gumroad ($29 + BYOK)
 
-The app uses [Lemon Squeezy](https://lemonsqueezy.com) for license keys. To sell the app:
+The app uses [Gumroad](https://gumroad.com) for license keys. To sell the app:
 
-1. **Create a product** on Lemon Squeezy (e.g. $29 one-time). Enable **License keys** in the product settings.
-2. **Set the buy link** in `src/pages/Activate.tsx`: set `LEMON_SQUEEZY_BUY_URL` to your Lemon Squeezy checkout URL (e.g. `https://yourstore.lemonsqueezy.com/checkout/...`).
+1. **Create a product** on Gumroad (e.g. $29 one-time). On the product’s content page, add the **License key** module (three-dot menu → License key) and note the **product ID** shown there.
+2. **Set the product ID** in `electron/gumroad.ts`: set `GUMROAD_PRODUCT_ID` to your product ID, or set the `GUMROAD_PRODUCT_ID` environment variable when building.
+3. **Set the buy link** in `src/pages/Activate.tsx`: set `GUMROAD_BUY_URL` to your Gumroad product URL (e.g. `https://yoursite.gumroad.com/l/yourproduct`).
 
-License validation uses Lemon Squeezy’s [License API](https://docs.lemonsqueezy.com/api/license-api/validate-license-key); no API key is required in the app.
+License validation uses Gumroad’s [Verify License API](https://gumroad.com/api#licenses); no OAuth or API key is required for verification.
 
 ## Building for Production
 
@@ -84,6 +85,7 @@ jht/
 │   ├── preload.ts        # Preload script (security bridge)
 │   ├── ipc-handlers.ts   # IPC handlers for API calls
 │   ├── config.ts         # Configuration management
+│   ├── gumroad.ts        # Gumroad license verification
 │   └── resume-generator.ts # Resume generation logic
 ├── src/                   # React frontend
 │   ├── components/       # React components

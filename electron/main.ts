@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog, Menu } from 'electron';
 import * as path from 'path';
 import { autoUpdater } from 'electron-updater';
 import { getAnthropicKey, setAnthropicKey, getLicenseKey, setLicenseKey, clearLicenseKey } from './config';
-import { verifyLicense } from './lemonsqueezy';
+import { verifyLicense } from './gumroad';
 import { closeDatabase, initializeDatabase } from './db';
 import { setMainWindow, setDatabase } from './ipc-handlers';
 
@@ -171,7 +171,7 @@ ipcMain.handle('config:setAnthropicKey', async (_event, apiKey: string) => {
   return setAnthropicKey(apiKey);
 });
 
-// License (Lemon Squeezy) IPC handlers
+// License (Gumroad) IPC handlers
 ipcMain.handle('license:get', () => getLicenseKey());
 ipcMain.handle('license:verify', async (_event, licenseKey: string) => {
   const result = await verifyLicense(licenseKey);
