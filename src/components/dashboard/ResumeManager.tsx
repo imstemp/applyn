@@ -30,21 +30,24 @@ export default function ResumeManager() {
     return () => window.removeEventListener("profile-saved", onProfileSaved);
   }, []);
 
-  const loadResumes = async () => {
+  const loadResumes = async (retryCount = 0) => {
+    const maxRetries = 3;
+    const retryDelays = [0, 400, 1200];
     setLoading(true);
     try {
+      if (retryCount > 0 && retryDelays[retryCount] !== undefined) {
+        await new Promise((r) => setTimeout(r, retryDelays[retryCount]));
+      }
       const response = await api.resume.list();
       if (response.success && response.data) {
         const newList = response.data;
         setResumes(newList);
-        // If we're viewing a resume that no longer exists (e.g. Original was regenerated), switch to new one or close
         if (viewingResumeId) {
           const stillExists = newList.some((r: Resume) => r.id === viewingResumeId);
           if (!stillExists && viewingWasOriginal) {
             const newOriginal = newList.find((r: Resume) => r.isTrueResume);
             if (newOriginal) {
               setViewingResumeId(newOriginal.id);
-              // still viewing the original (new one)
             } else {
               setViewingResumeId(null);
             }
@@ -52,9 +55,18 @@ export default function ResumeManager() {
             setViewingResumeId(null);
           }
         }
+        return;
+      }
+      if (retryCount < maxRetries - 1) {
+        loadResumes(retryCount + 1);
+        return;
       }
     } catch (error) {
       console.error("Error loading resumes:", error);
+      if (retryCount < maxRetries - 1) {
+        loadResumes(retryCount + 1);
+        return;
+      }
     } finally {
       setLoading(false);
     }

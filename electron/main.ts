@@ -3,8 +3,8 @@ import * as path from 'path';
 import { autoUpdater } from 'electron-updater';
 import { getAnthropicKey, setAnthropicKey, getLicenseKey, setLicenseKey, clearLicenseKey } from './config';
 import { verifyLicense } from './lemonsqueezy';
-import { closeDatabase } from './db';
-import { setMainWindow } from './ipc-handlers';
+import { closeDatabase, initializeDatabase } from './db';
+import { setMainWindow, setDatabase } from './ipc-handlers';
 
 // Disable proxy server detection
 app.commandLine.appendSwitch('auto-detect', 'false');
@@ -135,8 +135,8 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  // Create window immediately - show it right away
-  // Don't wait for database or anything else
+  // Initialize database before any renderer IPC so first load always has data
+  setDatabase(initializeDatabase());
   createWindow();
 
   // Check for updates on app start (only when packaged)

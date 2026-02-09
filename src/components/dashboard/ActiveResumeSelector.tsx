@@ -15,9 +15,14 @@ export default function ActiveResumeSelector({ onSelect }: ActiveResumeSelectorP
     loadResumes();
   }, []);
 
-  const loadResumes = async () => {
+  const loadResumes = async (retryCount = 0) => {
+    const maxRetries = 3;
+    const retryDelays = [0, 400, 1200];
     setLoading(true);
     try {
+      if (retryCount > 0 && retryDelays[retryCount] !== undefined) {
+        await new Promise((r) => setTimeout(r, retryDelays[retryCount]));
+      }
       const response = await api.resume.list();
       if (response.success && response.data) {
         setResumes(response.data);
@@ -26,9 +31,18 @@ export default function ActiveResumeSelector({ onSelect }: ActiveResumeSelectorP
           setActiveResume(active);
           onSelect(active);
         }
+        return;
+      }
+      if (retryCount < maxRetries - 1) {
+        loadResumes(retryCount + 1);
+        return;
       }
     } catch (error) {
       console.error("Error loading resumes:", error);
+      if (retryCount < maxRetries - 1) {
+        loadResumes(retryCount + 1);
+        return;
+      }
     } finally {
       setLoading(false);
     }

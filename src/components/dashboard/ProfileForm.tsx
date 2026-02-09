@@ -68,29 +68,37 @@ export default function ProfileForm() {
   const education = watch("education");
 
   useEffect(() => {
-    // Load existing profile
-    api.profile.get()
-      .then((response) => {
+    const retryDelays = [0, 400, 1200];
+
+    async function loadProfile() {
+      for (const delay of retryDelays) {
+        if (delay > 0) await new Promise((r) => setTimeout(r, delay));
+        const response = await api.profile.get();
         if (response.success && response.data) {
           setValue("personalInfo", response.data.personalInfo || {});
           setValue("workHistory", response.data.workHistory || []);
-          // Handle skills as JSON array (SQLite stores as JSON)
           const skillsArray = Array.isArray(response.data.skills) ? response.data.skills : [];
           setValue("skills", skillsArray);
           setValue("education", response.data.education || []);
+          return;
         }
-      })
-      .catch(console.error);
-    
-    // Check if user has an original resume
-    api.resume.list()
-      .then((response) => {
+      }
+    }
+
+    async function loadResumeFlag() {
+      for (const delay of retryDelays) {
+        if (delay > 0) await new Promise((r) => setTimeout(r, delay));
+        const response = await api.resume.list();
         if (response.success && response.data) {
           const originalResume = response.data.find((r: any) => r.isTrueResume);
           setHasOriginalResume(!!originalResume);
+          return;
         }
-      })
-      .catch(console.error);
+      }
+    }
+
+    loadProfile().catch(console.error);
+    loadResumeFlag().catch(console.error);
   }, [setValue]);
 
   const onSubmit = async (data: ProfileFormData) => {

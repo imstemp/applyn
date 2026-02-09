@@ -337,6 +337,7 @@ ${additionalInfo ? `\nAdditional Information (incorporate into the cover letter)
 WRITING STYLE REQUIREMENTS:
 - Personality/Tone: ${personalityInstructions[personality || 'professional']}
 - Length: ${lengthInstructions[length || 'medium']}
+- Use clear, natural language. Avoid corporate jargon, buzzwords, and overcomplicated wording. Sound like a real person writing to another person—not stiff or overly formal.
 
 FORMATTING RULES:
 - Start the letter immediately with "Dear Hiring Manager," (or "Dear [Name]," if a hiring contact is known). Do NOT include any header above this—no contact info, date, or address.
@@ -351,7 +352,7 @@ ${additionalInfo ? `4. APPLICANT EMPHASIS - YOU MUST FOLLOW THIS: The applicant 
 Return only the cover letter text, no additional formatting or explanations.`;
     
     const content = await callClaude({
-      system: "You are a professional cover letter writer. Write compelling, personalized cover letters. FORMAT: Start with 'Dear Hiring Manager,' — no header, date, or contact info above it. End with 'Sincerely,' followed immediately (no blank line) by the candidate's name. CRITICAL: You must ONLY use information explicitly stated in the resume provided. NEVER fabricate, infer, or assume any experience, skills, or qualifications. When the applicant provides additional information about what to emphasize (e.g., 'point out X years in Y role'), you MUST incorporate those points prominently in the cover letter when the resume supports them.",
+      system: "You are a professional cover letter writer. Write compelling, personalized cover letters in clear, natural language. Avoid corporate jargon, buzzwords, and overcomplicated wording—sound like a real person. FORMAT: Start with 'Dear Hiring Manager,' — no header, date, or contact info above it. End with 'Sincerely,' followed immediately (no blank line) by the candidate's name. CRITICAL: You must ONLY use information explicitly stated in the resume provided. NEVER fabricate, infer, or assume any experience, skills, or qualifications. When the applicant provides additional information about what to emphasize (e.g., 'point out X years in Y role'), you MUST incorporate those points prominently in the cover letter when the resume supports them.",
       messages: [{ role: "user", content: prompt }],
       maxTokens: 2048,
     });

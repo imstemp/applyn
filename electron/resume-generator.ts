@@ -114,16 +114,16 @@ CRITICAL: You are ONLY enhancing descriptions and creating a summary. DO NOT ret
 MANDATORY: You MUST return enhanced descriptions for EVERY work experience and EVERY education entry provided. The arrays you return must have the EXACT SAME LENGTH as the arrays in the Base Resume Structure.
 
 Your task:
-1. CREATE A PROFESSIONAL SUMMARY: Write a compelling 3-4 sentence summary that highlights the candidate's key strengths${ageOptimized ? ", proven expertise, and unique value proposition" : ", years of experience, and unique value proposition"}. Use powerful, confident language${ageOptimized ? " with a modern, contemporary tone" : ""}.
+1. CREATE A PROFESSIONAL SUMMARY: Write a compelling 3-4 sentence summary that highlights the candidate's key strengths${ageOptimized ? ", proven expertise, and unique value proposition" : ", years of experience, and unique value proposition"}. Use clear, natural language—avoid corporate jargon, buzzwords, and overcomplicated wording. Sound like a real person, not stiff or overly formal.
 
-2. CREATE CORE COMPETENCIES: From the candidate's work history, skills, and experience in the Base Resume Structure below, derive 5-8 core competencies in "Title – Description" format. Do not invent competencies; each must be supported by their actual roles, achievements, or skills. Each line: a short bold-style title (e.g. "Team Leadership & Development"), then an em dash "–", then 1-2 sentences describing impact drawn from their experience (e.g. "Built and managed teams up to 15+ members; recruited, mentored, and developed talent"). Return as a single string with each competency on its own line starting with "• ".
+2. CREATE CORE COMPETENCIES: From the candidate's work history, skills, and experience in the Base Resume Structure below, derive 5-8 core competencies in "Title – Description" format. Do not invent competencies; each must be supported by their actual roles, achievements, or skills. Each line: a short title, then an em dash "–", then 1-2 sentences in plain, natural language. Avoid jargon and overcomplicated wording—write like a human would. Return as a single string with each competency on its own line starting with "• ".
 
 3. ENHANCE WORK EXPERIENCE DESCRIPTIONS: For EACH AND EVERY work experience in the Base Resume Structure, enhance the description field only (you must return one enhanced description for each work experience):
    - Format as bullet points: Each achievement should be on its own line starting with "• " (bullet character)
    - Convert plain descriptions into achievement-focused bullet points
-   - Use strong, modern action verbs (Led, Developed, Implemented, Optimized, Increased, etc.)${ageOptimized ? " - prefer contemporary, current industry terminology" : ""}
+   - Use strong, clear action verbs (Led, Developed, Implemented, etc.) but avoid overcomplicated or buzzword-heavy phrasing
    - Add quantifiable results where possible (percentages, numbers, scale)
-   - Make responsibilities sound more impactful and professional
+   - Write in plain, natural language—sound like a real person, not a thesaurus
    - Focus on achievements and outcomes, not just duties${ageOptimized ? "\n   - For older positions, emphasize transferable skills and modern relevance rather than dated specifics" : ""}
    - CRITICAL: Return the description as a multi-line string with each bullet point on a new line, starting with "• "
 
@@ -169,17 +169,17 @@ CRITICAL: You are ONLY enhancing descriptions and creating a summary. DO NOT ret
 MANDATORY: You MUST return enhanced descriptions for EVERY work experience and EVERY education entry provided. The arrays you return must have the EXACT SAME LENGTH as the arrays in the Base Resume Structure.
 
 Your task:
-1. CREATE A TARGETED PROFESSIONAL SUMMARY: Write a compelling 3-4 sentence summary specifically tailored for ${jobType} roles, highlighting relevant experience and skills${ageOptimized ? " with a modern, contemporary tone" : ""}.
+1. CREATE A TARGETED PROFESSIONAL SUMMARY: Write a compelling 3-4 sentence summary specifically tailored for ${jobType} roles, highlighting relevant experience and skills. Use clear, natural language—avoid corporate jargon, buzzwords, and overcomplicated wording. Sound like a real person, not stiff or overly formal.
 
-2. CREATE CORE COMPETENCIES: From the candidate's work history, skills, and experience in the Base Resume Structure below, derive 5-8 core competencies relevant to ${jobType} in "Title – Description" format. Do not invent competencies; each must be supported by their actual roles, achievements, or skills. Each line: short title, then em dash "–", then 1-2 sentences describing impact drawn from their experience. Return as a single string, each line starting with "• ".
+2. CREATE CORE COMPETENCIES: From the candidate's work history, skills, and experience in the Base Resume Structure below, derive 5-8 core competencies relevant to ${jobType} in "Title – Description" format. Do not invent competencies; each must be supported by their actual roles, achievements, or skills. Each line: short title, then em dash "–", then 1-2 sentences in plain, natural language. Avoid jargon and overcomplicated wording—write like a human would. Return as a single string, each line starting with "• ".
 
 3. ENHANCE WORK EXPERIENCE DESCRIPTIONS: For EACH AND EVERY work experience in the Base Resume Structure, enhance the description field only, emphasizing relevance to ${jobType} (you must return one enhanced description for each work experience):
    - Format as bullet points: Each achievement should be on its own line starting with "• " (bullet character)
    - Convert plain descriptions into achievement-focused bullet points
-   - Use strong, modern action verbs (Led, Developed, Implemented, Optimized, Increased, etc.)${ageOptimized ? " - prefer contemporary, current industry terminology" : ""}
+   - Use strong, clear action verbs (Led, Developed, Implemented, etc.) but avoid overcomplicated or buzzword-heavy phrasing
    - Emphasize experiences most relevant to ${jobType} roles${ageOptimized ? " - prioritize recent experiences" : ""}
    - Add quantifiable results where possible
-   - Make responsibilities sound more impactful and professional
+   - Write in plain, natural language—sound like a real person, not a thesaurus
    - Focus on achievements and outcomes relevant to ${jobType}${ageOptimized ? "\n   - For older positions, emphasize transferable skills and modern relevance rather than dated specifics" : ""}
    - CRITICAL: Return the description as a multi-line string with each bullet point on a new line, starting with "• "
 
@@ -219,7 +219,7 @@ CRITICAL REQUIREMENTS:
 - These will be merged with the preserved factual data
 - Return only valid JSON.`;
 
-  const systemPrompt = `You are an expert resume writer with 20+ years of experience. Your specialty is transforming raw information into polished, professional resumes that sound impressive and compelling. You excel at using strong action verbs, achievement-focused language, and industry-standard terminology to make candidates stand out.${ageOptimized ? " SPECIAL FOCUS: You specialize in creating age-optimized resumes that emphasize modern skills, contemporary language, and recent achievements while maintaining professionalism and truthfulness." : ""} CRITICAL RULE: You must preserve ALL factual information EXACTLY as provided - company names (including LLC, Inc., Corp., etc.), job titles/positions, personal information, dates, institution names, degree names. NEVER change, shorten, remove suffixes, or 'improve' factual data. Only enhance descriptions and summaries - factual data must remain identical to the source. FORMATTING RULE: All work experience descriptions MUST be formatted as bullet points, with each bullet on a new line starting with "• " (bullet character followed by space).`;
+  const systemPrompt = `You are an expert resume writer. Your goal is clear, human-sounding resumes: professional but not stiff. Use plain language and strong action verbs. Avoid corporate jargon, buzzwords, and overcomplicated wording—write like a real person would.${ageOptimized ? " For age-optimized resumes, emphasize modern skills and recent achievements while staying truthful." : ""} CRITICAL RULE: You must preserve ALL factual information EXACTLY as provided - company names (including LLC, Inc., Corp., etc.), job titles/positions, personal information, dates, institution names, degree names. NEVER change, shorten, remove suffixes, or 'improve' factual data. Only enhance descriptions and summaries - factual data must remain identical to the source. FORMATTING RULE: All work experience descriptions MUST be formatted as bullet points, with each bullet on a new line starting with "• " (bullet character followed by space).`;
 
   const response = await anthropic.messages.create({
     model: "claude-haiku-4-5-20251001",
