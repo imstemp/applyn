@@ -30,6 +30,15 @@ export default function ResumeManager() {
     return () => window.removeEventListener("profile-saved", onProfileSaved);
   }, []);
 
+  // Re-load resumes when app window becomes visible again (e.g. after being minimized/hidden)
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") loadResumes();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, []);
+
   const loadResumes = async (retryCount = 0) => {
     const maxRetries = 3;
     const retryDelays = [0, 400, 1200];

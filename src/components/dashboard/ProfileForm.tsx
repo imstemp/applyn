@@ -101,6 +101,30 @@ export default function ProfileForm() {
     loadResumeFlag().catch(console.error);
   }, [setValue]);
 
+  // Re-load data when app window becomes visible again (e.g. after being minimized/hidden)
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      api.profile.get().then((response) => {
+        if (response.success && response.data) {
+          setValue("personalInfo", response.data.personalInfo || {});
+          setValue("workHistory", response.data.workHistory || []);
+          const skillsArray = Array.isArray(response.data.skills) ? response.data.skills : [];
+          setValue("skills", skillsArray);
+          setValue("education", response.data.education || []);
+        }
+      });
+      api.resume.list().then((response) => {
+        if (response.success && response.data) {
+          const originalResume = response.data.find((r: any) => r.isTrueResume);
+          setHasOriginalResume(!!originalResume);
+        }
+      });
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [setValue]);
+
   const onSubmit = async (data: ProfileFormData) => {
     setLoading(true);
     setSaved(false);
