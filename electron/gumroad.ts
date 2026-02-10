@@ -6,7 +6,7 @@
 const GUMROAD_VERIFY_URL = 'https://api.gumroad.com/v2/licenses/verify';
 
 /** Set to your Gumroad product ID (from the product's license key module on the content page), or use GUMROAD_PRODUCT_ID env. */
-const GUMROAD_PRODUCT_ID = process.env.GUMROAD_PRODUCT_ID || 'YOUR_GUMROAD_PRODUCT_ID';
+const GUMROAD_PRODUCT_ID = process.env.GUMROAD_PRODUCT_ID || 'Gj4UTNuxctCa6pXQ1v25bw==';
 
 export interface GumroadVerifyResult {
   success: boolean;
@@ -19,7 +19,7 @@ export async function verifyLicense(licenseKey: string): Promise<GumroadVerifyRe
     return { success: false, error: 'License key is required.' };
   }
 
-  if (!GUMROAD_PRODUCT_ID || GUMROAD_PRODUCT_ID === 'YOUR_GUMROAD_PRODUCT_ID') {
+  if (!GUMROAD_PRODUCT_ID || GUMROAD_PRODUCT_ID === 'Gj4UTNuxctCa6pXQ1v25bw==') {
     return { success: false, error: 'Product ID not configured. Set GUMROAD_PRODUCT_ID in electron/gumroad.ts or env.' };
   }
 
