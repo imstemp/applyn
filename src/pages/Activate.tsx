@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /** Replace with your Gumroad product URL, e.g. https://yoursite.gumroad.com/l/product */
-const GUMROAD_BUY_URL = 'https://applyn.gumroad.com/l/YOUR_PRODUCT';
+const GUMROAD_BUY_URL = 'https://tpm.gumroad.com/l/applyn?wanted=true';
 
 declare global {
   interface Window {
