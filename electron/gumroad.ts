@@ -19,7 +19,7 @@ export async function verifyLicense(licenseKey: string): Promise<GumroadVerifyRe
     return { success: false, error: 'License key is required.' };
   }
 
-  if (!GUMROAD_PRODUCT_ID || GUMROAD_PRODUCT_ID === 'Gj4UTNuxctCa6pXQ1v25bw==') {
+  if (!GUMROAD_PRODUCT_ID || GUMROAD_PRODUCT_ID === 'YOUR_GUMROAD_PRODUCT_ID') {
     return { success: false, error: 'Product ID not configured. Set GUMROAD_PRODUCT_ID in electron/gumroad.ts or env.' };
   }
 
